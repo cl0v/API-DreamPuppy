@@ -1,4 +1,5 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
 from .database import Base
@@ -7,20 +8,22 @@ from .database import Base
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    created_at = Column(DateTime, default=func.now())
     is_active = Column(Boolean, default=True)
 
-    items = relationship("Item", back_populates="owner")
+    credentials = relationship("UserCredentials", back_populates="user", uselist=False)
 
 
-class Item(Base):
-    __tablename__ = "items"
+class UserCredentials(Base):
+    __tablename__ = "credentials"
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
-    description = Column(String, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True)
+    pwd = Column(String)
+    # sub="$email $cred_id $user_id" Separar por espaco pode ajudar muito
+    jwt = Column(String, unique=True, index=True, nullable=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Verificar necessidade de ser nulo
 
-    owner = relationship("User", back_populates="items")
+    user = relationship("User", back_populates="credentials")
