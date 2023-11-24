@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 # class ItemBase(BaseModel):
@@ -22,17 +22,21 @@ from pydantic import BaseModel
 
 
 class UserBase(BaseModel):
-    full_name: str
-
+    name: str
 
 class UserCreate(UserBase):
     cpf: str
 
 
-
 class User(UserBase):
     id: int
-    is_active: bool
+    # is_active: bool
 
     class Config:
         from_attributes = True
+
+class UserWithToken(User):
+    model_config = ConfigDict(from_attributes=True)
+
+    access_token: str
+    token_type: str

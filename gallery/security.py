@@ -55,7 +55,7 @@ def authenticate_user_credentials(
     db: Session,
     username: str,
     password: str,
-) -> Token | None:
+) -> Tuple[Token | None, int | None]:
     hashed_password = get_password_hash(password)
     credentials = (
         db.query(models.UserCredentials)
@@ -74,7 +74,10 @@ def authenticate_user_credentials(
     db.commit()
     db.refresh(credentials)
 
-    return {"access_token": credentials.jwt, "token_type": "bearer"}
+    return {
+        "access_token": credentials.jwt,
+        "token_type": "bearer",
+    }, credentials.user_id
 
 
 def register_user_credentials(
@@ -101,20 +104,20 @@ def register_user_credentials(
 
 
 def add_user_id_to_credentials(
+    db: Session,
+    token: str,
     user_id: int,
-    token: Annotated[str, Security(oauth2_scheme)],
-    db: Session = Depends(get_db), 
 ):
     credentials = (
-            db.query(models.UserCredentials)
-            .filter(models.UserCredentials.jwt == token)
-            .first()
-        )
+        db.query(models.UserCredentials)
+        .filter(models.UserCredentials.jwt == token)
+        .first()
+    )
 
     credentials.user_id = user_id
 
     db.commit()
-    
+
 
 def validate_jwt(
     token: Annotated[str, Security(oauth2_scheme)],
@@ -150,6 +153,6 @@ def validate_jwt(
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Credenciais inválidas",
+            detail="Credenciais não encontradas",
             headers={"WWW-Authenticate": "Bearer"},
         )

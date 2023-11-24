@@ -1,7 +1,9 @@
+from fastapi.datastructures import URL
+from fastapi.responses import RedirectResponse
 import uvicorn
 
 from typing import Annotated
-from fastapi import Depends, FastAPI, HTTPException, status, Body
+from fastapi import Depends, FastAPI, HTTPException, status, Body, Header
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
@@ -9,7 +11,9 @@ from sqlalchemy.orm import Session
 from gallery.database import get_db, engine
 from gallery.security import (
     Token,
+    oauth2_scheme,
     validate_jwt,
+    add_user_id_to_credentials,
     register_user_credentials,
     authenticate_user_credentials,
 )
@@ -21,14 +25,6 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 # Usar middleware para log de falhas de sistema.
-
-
-@app.post("/users/new", dependencies=[Depends(validate_jwt)])
-def create_user(
-    user: Annotated[schemas.UserCreate, Body()],
-):
-    print("New user")
-    pass
 
 
 @app.post("/auth/register", response_model=Token)
@@ -53,12 +49,29 @@ async def register_for_credentials(
     return token
 
 
-@app.post("/auth/login", response_model=Token)
+@app.post(
+    "/users/new",
+    dependencies=[Depends(validate_jwt)],
+    response_model=schemas.User,
+)
+def create_user(
+    user: Annotated[schemas.UserCreate, Body()],
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme),
+):
+    new_user = crud.create_user(db, user)
+    print(new_user)
+    add_user_id_to_credentials(db, token, new_user.id)
+
+    return new_user
+
+
+@app.post("/auth/login", response_model=schemas.UserWithToken)
 async def login_for_credentials(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
 ):
-    token = authenticate_user_credentials(db, form_data.username, form_data.password)
+    token, user_id = authenticate_user_credentials(db, form_data.username, form_data.password)
 
     if not token:
         raise HTTPException(
@@ -66,8 +79,10 @@ async def login_for_credentials(
             detail="Email ou senha incorretos",
             headers={"WWW-Authenticate": "Bearer"},
         )
+    
+    user = crud.get_user(db, user_id=user_id);
 
-    return token
+    return schemas.UserWithToken(**token, id=user.id, name=user.name)
 
 
 ##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
