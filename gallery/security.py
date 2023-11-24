@@ -84,13 +84,23 @@ def register_user_credentials(
     db: Session,
     username: str,
     password: str,
-) -> Tuple[Token | None, int | None]:
+) -> Token:
+    pass_len = 6
+    if len(password) < pass_len:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"A senha precisa de no mínimo {pass_len} caracteres",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     hashed_password = get_password_hash(password)
 
     access_token = create_access_token(data={"sub": username})
 
     credentials = models.UserCredentials(
-        email=username, pwd=hashed_password, jwt=access_token
+        email=username,
+        pwd=hashed_password,
+        jwt=access_token,
     )
 
     try:
@@ -98,9 +108,13 @@ def register_user_credentials(
         db.commit()
         db.refresh(credentials)
     except IntegrityError:
-        return None, 1
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="E-mail já registrado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    return {"access_token": access_token, "token_type": "bearer"}, None
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 def add_user_id_to_credentials(

@@ -32,21 +32,7 @@ async def register_for_credentials(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
 ):
-    details = "Falha ao cadastrar"
-    token, err = register_user_credentials(db, form_data.username, form_data.password)
-
-    match err:
-        case 1:
-            details = "E-mail já registrado"
-
-    if not token:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=details,
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-
-    return token
+    return register_user_credentials(db, form_data.username, form_data.password)
 
 
 @app.post(
@@ -71,7 +57,9 @@ async def login_for_credentials(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
 ):
-    token, user_id = authenticate_user_credentials(db, form_data.username, form_data.password)
+    token, user_id = authenticate_user_credentials(
+        db, form_data.username, form_data.password
+    )
 
     if not token:
         raise HTTPException(
@@ -79,8 +67,8 @@ async def login_for_credentials(
             detail="Email ou senha incorretos",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
-    user = crud.get_user(db, user_id=user_id);
+
+    user = crud.get_user(db, user_id=user_id)
 
     return schemas.UserWithToken(**token, id=user.id, name=user.name)
 
