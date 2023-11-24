@@ -1,17 +1,21 @@
+import uvicorn
+
 from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
-from .database import get_db, engine
 
-from . import crud, models, schemas
-from .security import (
+from gallery.database import get_db, engine
+from gallery.security import (
     Token,
     JWTVerification,
+    validate_jwt,
     register_user_credentials,
     authenticate_user_credentials,
 )
+
+from gallery import crud, models, schemas
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -20,19 +24,18 @@ app = FastAPI()
 # Usar middleware para log de falhas de sistema.
 
 
-@app.post("/users/new")
+@app.post("/users/new", dependencies=[Depends(validate_jwt)])
 def create_user(
     user: Annotated[schemas.UserCreate, Body()],
-    db: Session = Depends(get_db),
-    token= Annotated[None, Depends(JWTVerification)]
 ):
-    print(token)
-    
+    print("New user")
+    pass
+
 
 @app.post("/auth/register", response_model=Token)
 async def register_for_credentials(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
 ):
     details = "Falha ao cadastrar"
     token, err = register_user_credentials(db, form_data.username, form_data.password)
@@ -54,7 +57,7 @@ async def register_for_credentials(
 @app.post("/auth/login", response_model=Token)
 async def login_for_credentials(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
 ):
     token = authenticate_user_credentials(db, form_data.username, form_data.password)
 
@@ -68,13 +71,13 @@ async def login_for_credentials(
     return token
 
 
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
 
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -109,3 +112,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 # def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 #     items = crud.get_items(db, skip=skip, limit=limit)
 #     return items
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
