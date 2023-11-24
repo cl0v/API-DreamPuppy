@@ -130,7 +130,24 @@ class JWTVerification:
                 detail="Faça login para continuar",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+
         payload = jwt.decode(self.token, SECRET_KEY, algorithms=[ALGORITHM])
+
+        expiration = payload.get("exp")
+
+        # Convert the "exp" claim to a datetime object (assuming it's in Unix timestamp format)
+        exp_datetime = datetime.utcfromtimestamp(expiration)
+
+        # Get the current time
+        current_time = datetime.utcnow()
+
+        # Compare the "exp" claim with the current time
+        if exp_datetime < current_time:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Faça login novamente para continuar",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
         username: str = payload.get("sub")
 
@@ -157,7 +174,7 @@ class JWTVerification:
             .filter(UserCredentials.jwt == self.token)
             .first()
         )
-        
+
         credentials.user_id = user_id
 
         self.db.commit()
