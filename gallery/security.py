@@ -1,19 +1,16 @@
-from pydantic import BaseModel
+from datetime import datetime, timedelta
+from typing import Annotated, Tuple
 from passlib.context import CryptContext
+from pydantic import BaseModel
+from fastapi import Depends, HTTPException, status, Security
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from jose.exceptions import ExpiredSignatureError
-from gallery import models
-from datetime import datetime, timedelta
-from typing import Annotated, Tuple
-from fastapi import Depends, HTTPException, status, Security
-from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from gallery.database import get_db
-
-
+from gallery import models
 from gallery.env import SECRET_KEY
 
 
@@ -103,80 +100,21 @@ def register_user_credentials(
     return {"access_token": access_token, "token_type": "bearer"}, None
 
 
-class JWTVerification:
-    def __init__(
-        self,
-        token: Annotated[str, Security(oauth2_scheme)],
-        db=Annotated[Session, Depends(get_db)],
-    ):
-        self.db = db
-        self.token = token
-
-    def __call__(self) -> str:
-        if not self.token:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Faça login para continuar",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-        try:
-            payload = jwt.decode(self.token, SECRET_KEY, algorithms=[ALGORITHM])
-            print(f"payload {payload}")
-        except Exception as err:
-            print(err)
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Faça login novamente para continuar",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        expiration = payload.get("exp")
-
-        # Convert the "exp" claim to a datetime object (assuming it's in Unix timestamp format)
-        exp_datetime = datetime.utcfromtimestamp(expiration)
-
-        # Get the current time
-        current_time = datetime.utcnow()
-
-        # Compare the "exp" claim with the current time
-        if exp_datetime < current_time:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Faça login novamente para continuar",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
-
-        username: str = payload.get("sub")
-
-        credentials = (
-            self.db.query(models.UserCredentials)
-            .filter(
-                models.UserCredentials.jwt == self.token
-                and models.UserCredentials.email == username
-            )
+def add_user_id_to_credentials(
+    user_id: int,
+    token: Annotated[str, Security(oauth2_scheme)],
+    db: Session = Depends(get_db), 
+):
+    credentials = (
+            db.query(models.UserCredentials)
+            .filter(models.UserCredentials.jwt == token)
             .first()
         )
 
-        if not credentials:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Credenciais inválidas",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+    credentials.user_id = user_id
 
-        return credentials.jwt
-
-    def update_user_id(self, user_id: int):
-        credentials = (
-            self.db.query(models.UserCredentials)
-            .filter(models.UserCredentials.jwt == self.token)
-            .first()
-        )
-
-        credentials.user_id = user_id
-
-        self.db.commit()
-
+    db.commit()
+    
 
 def validate_jwt(
     token: Annotated[str, Security(oauth2_scheme)],
@@ -197,7 +135,7 @@ def validate_jwt(
             detail="Faça login novamente para continuar",
             headers={"WWW-Authenticate": "Bearer"},
         )
-   
+
     username: str = payload.get("sub")
 
     credentials = (
