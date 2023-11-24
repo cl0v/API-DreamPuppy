@@ -9,7 +9,6 @@ from sqlalchemy.orm import Session
 from gallery.database import get_db, engine
 from gallery.security import (
     Token,
-    JWTVerification,
     validate_jwt,
     register_user_credentials,
     authenticate_user_credentials,
