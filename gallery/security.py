@@ -6,6 +6,7 @@ from .models import UserCredentials
 from datetime import datetime, timedelta
 from typing import Annotated, Tuple
 from fastapi import Depends, HTTPException, status
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
