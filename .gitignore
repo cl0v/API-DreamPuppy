@@ -1,3 +1,4 @@
 *.db
 __pycache__/
 gallery/env.py
+scripts/example.sql

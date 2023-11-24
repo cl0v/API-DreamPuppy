@@ -1,11 +1,17 @@
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
 from typing import Annotated
+from fastapi import Depends, FastAPI, HTTPException, status, Body
+from fastapi.security import OAuth2PasswordRequestForm
+
+from sqlalchemy.orm import Session
+from .database import get_db, engine
 
 from . import crud, models, schemas
-from .security import Token, register_user_credentials, authenticate_user_credentials
-from .database import SessionLocal, engine
+from .security import (
+    Token,
+    JWTVerification,
+    register_user_credentials,
+    authenticate_user_credentials,
+)
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -14,19 +20,14 @@ app = FastAPI()
 # Usar middleware para log de falhas de sistema.
 
 
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-@app.post("users/new")
-def create_user():
-    pass
-
+@app.post("/users/new")
+def create_user(
+    user: Annotated[schemas.UserCreate, Body()],
+    db: Session = Depends(get_db),
+    token= Annotated[None, Depends(JWTVerification)]
+):
+    print(token)
+    
 
 @app.post("/auth/register", response_model=Token)
 async def register_for_credentials(
@@ -56,7 +57,7 @@ async def login_for_credentials(
     db: Session = Depends(get_db),
 ):
     token = authenticate_user_credentials(db, form_data.username, form_data.password)
-    
+
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -66,6 +67,14 @@ async def login_for_credentials(
 
     return token
 
+
+
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
