@@ -1,23 +1,29 @@
 from pydantic import BaseModel
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
-from .models import UserCredentials
+from jose import jwt
+from jose.exceptions import ExpiredSignatureError
+from gallery import models
 from datetime import datetime, timedelta
 from typing import Annotated, Tuple
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Security
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from .database import get_db
+from gallery.database import get_db
 
 
-from .env import SECRET_KEY
+from gallery.env import SECRET_KEY
 
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
+
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 class Token(BaseModel):
@@ -29,11 +35,6 @@ class TokenData(BaseModel):
     email: str
     user_credential_id: int
     user_id: int
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
 def verify_password(plain_password, hashed_password):
@@ -60,9 +61,10 @@ def authenticate_user_credentials(
 ) -> Token | None:
     hashed_password = get_password_hash(password)
     credentials = (
-        db.query(UserCredentials)
+        db.query(models.UserCredentials)
         .filter(
-            UserCredentials.email == username and UserCredentials.pwd == hashed_password
+            models.UserCredentials.email == username
+            and models.UserCredentials.pwd == hashed_password
         )
         .first()
     )
@@ -87,7 +89,9 @@ def register_user_credentials(
 
     access_token = create_access_token(data={"sub": username})
 
-    credentials = UserCredentials(email=username, pwd=hashed_password, jwt=access_token)
+    credentials = models.UserCredentials(
+        email=username, pwd=hashed_password, jwt=access_token
+    )
 
     try:
         db.add(credentials)
@@ -99,40 +103,32 @@ def register_user_credentials(
     return {"access_token": access_token, "token_type": "bearer"}, None
 
 
-def set_user_id_from_jwt(
-    db: Session,
-    user_id: int,
-    token: str = Depends(oauth2_scheme),
-):
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    username: str = payload.get("sub")
-
-    credentials = (
-        db.query(UserCredentials)
-        .filter(UserCredentials.jwt == token and UserCredentials.email == username)
-        .first()
-    )
-
-    credentials.user_id = user_id
-    db.refresh(credentials)
-
-
 class JWTVerification:
     def __init__(
-        self, db: Session = Depends(get_db), token: str | None = Depends(oauth2_scheme)
+        self,
+        token: Annotated[str, Security(oauth2_scheme)],
+        db=Annotated[Session, Depends(get_db)],
     ):
         self.db = db
         self.token = token
 
-    def __call__(self):
+    def __call__(self) -> str:
         if not self.token:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Faça login para continuar",
                 headers={"WWW-Authenticate": "Bearer"},
             )
-
-        payload = jwt.decode(self.token, SECRET_KEY, algorithms=[ALGORITHM])
+        try:
+            payload = jwt.decode(self.token, SECRET_KEY, algorithms=[ALGORITHM])
+            print(f"payload {payload}")
+        except Exception as err:
+            print(err)
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Faça login novamente para continuar",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
         expiration = payload.get("exp")
 
@@ -153,9 +149,10 @@ class JWTVerification:
         username: str = payload.get("sub")
 
         credentials = (
-            self.db.query(UserCredentials)
+            self.db.query(models.UserCredentials)
             .filter(
-                UserCredentials.jwt == self.token and UserCredentials.email == username
+                models.UserCredentials.jwt == self.token
+                and models.UserCredentials.email == username
             )
             .first()
         )
@@ -171,11 +168,50 @@ class JWTVerification:
 
     def update_user_id(self, user_id: int):
         credentials = (
-            self.db.query(UserCredentials)
-            .filter(UserCredentials.jwt == self.token)
+            self.db.query(models.UserCredentials)
+            .filter(models.UserCredentials.jwt == self.token)
             .first()
         )
 
         credentials.user_id = user_id
 
         self.db.commit()
+
+
+def validate_jwt(
+    token: Annotated[str, Security(oauth2_scheme)],
+    db: Session = Depends(get_db),
+):
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Faça login para continuar",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except ExpiredSignatureError as err:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Faça login novamente para continuar",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+   
+    username: str = payload.get("sub")
+
+    credentials = (
+        db.query(models.UserCredentials)
+        .filter(
+            models.UserCredentials.jwt == token
+            and models.UserCredentials.email == username
+        )
+        .first()
+    )
+
+    if not credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciais inválidas",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
