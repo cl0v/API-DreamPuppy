@@ -7,10 +7,8 @@ from fastapi import Depends, FastAPI, HTTPException, status, Body, Header
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
-from gallery.cruds import user
 
-from gallery.database import get_db, engine
-from gallery.models import user
+from gallery.database import get_db, engine, Base
 from gallery.security import (
     Token,
     oauth2_scheme,
@@ -20,9 +18,11 @@ from gallery.security import (
     authenticate_user_credentials,
 )
 
-from gallery.schemas import user
+# import gallery.models.user as user_model
+import gallery.schemas.user as user_schema
+import gallery.cruds.user as user_crud
 
-user.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -40,21 +40,21 @@ async def register_for_credentials(
 @app.post(
     "/users/new",
     dependencies=[Depends(validate_jwt)],
-    response_model=user.User,
+    response_model=user_schema.User,
 )
 def create_user(
-    user: Annotated[user.UserCreate, Body()],
+    user: Annotated[user_schema.UserCreate, Body()],
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme),
 ):
-    new_user = user.create_user(db, user)
+    new_user = user_crud.create_user(db, user)
     print(new_user)
     add_user_id_to_credentials(db, token, new_user.id)
 
     return new_user
 
 
-@app.post("/auth/login", response_model=user.UserWithToken)
+@app.post("/auth/login", response_model=user_schema.UserWithToken)
 async def login_for_credentials(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
@@ -70,36 +70,36 @@ async def login_for_credentials(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    user = user.get_user(db, user_id=user_id)
+    user = user_crud.get_user(db, user_id=user_id)
 
-    return user.UserWithToken(**token, id=user.id, name=user.name)
-
-
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+    return user_schema.UserWithToken(**token, id=user.id, name=user.name)
 
 
-@app.post("/users/", response_model=user.User)
-def create_user(user: user.UserCreate, db: Session = Depends(get_db)):
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+
+
+@app.post("/users/", response_model=user_schema.User)
+def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
     db_user = user.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     return user.create_user(db=db, user=user)
 
 
-@app.get("/users/", response_model=list[user.User])
+@app.get("/users/", response_model=list[user_schema.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = user.get_users(db, skip=skip, limit=limit)
+    users = user_crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
-@app.get("/users/{user_id}", response_model=user.User)
+@app.get("/users/{user_id}", response_model=user_schema.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = user.get_user(db, user_id=user_id)
+    db_user = user_crud.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
