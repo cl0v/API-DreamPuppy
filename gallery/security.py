@@ -67,9 +67,20 @@ def authenticate_user_credentials(
     )
 
     if not credentials:
-        return None
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email ou senha incorretos",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-    credentials.jwt = create_access_token(data={"sub": username})
+    if not credentials.user_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Usuário não cadastrado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    credentials.jwt = create_access_token(data={"sub": str(credentials.user_id)})
 
     db.commit()
     db.refresh(credentials)
@@ -92,10 +103,10 @@ def register_user_credentials(
             detail=f"A senha precisa de no mínimo {pass_len} caracteres",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     hashed_password = get_password_hash(password)
 
-    access_token = create_access_token(data={"sub": username})
+    access_token = create_access_token(data={"sub": ""})
 
     credentials = user.UserCredentials(
         email=username,
@@ -123,9 +134,7 @@ def add_user_id_to_credentials(
     user_id: int,
 ):
     credentials = (
-        db.query(user.UserCredentials)
-        .filter(user.UserCredentials.jwt == token)
-        .first()
+        db.query(user.UserCredentials).filter(user.UserCredentials.jwt == token).first()
     )
 
     credentials.user_id = user_id
@@ -153,13 +162,15 @@ def validate_jwt(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    username: str = payload.get("sub")
+    user_id_str: str = payload.get("sub")
+    
+    if user_id_str == '':
 
     credentials = (
         db.query(user.UserCredentials)
         .filter(
             user.UserCredentials.jwt == token
-            and user.UserCredentials.email == username
+            and user.UserCredentials.user_id == user_id
         )
         .first()
     )

@@ -2,3 +2,4 @@
 __pycache__/
 gallery/env.py
 scripts/example.sql
+notes.md

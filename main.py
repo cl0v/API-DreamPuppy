@@ -13,10 +13,13 @@ from gallery.security import (
     Token,
     oauth2_scheme,
     validate_jwt,
+    user_id_from_token,
     add_user_id_to_credentials,
     register_user_credentials,
     authenticate_user_credentials,
 )
+
+
 
 # import gallery.models.user as user_model
 import gallery.schemas.user as user_schema
@@ -40,7 +43,7 @@ async def register_for_credentials(
 @app.post(
     "/users/new",
     dependencies=[Depends(validate_jwt)],
-    response_model=user_schema.User,
+    response_model=user_schema.UserWithToken,
 )
 def create_user(
     user: Annotated[user_schema.UserCreate, Body()],
@@ -70,7 +73,7 @@ async def login_for_credentials(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    user = user_crud.get_user(db, user_id=user_id)
+    user = user_crud.get_user(db, user_id)
 
     return user_schema.UserWithToken(**token, id=user.id, name=user.name)
 
@@ -81,28 +84,6 @@ async def login_for_credentials(
 ##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
 ##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
 ##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-
-
-@app.post("/users/", response_model=user_schema.User)
-def create_user(user: user_schema.UserCreate, db: Session = Depends(get_db)):
-    db_user = user.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return user.create_user(db=db, user=user)
-
-
-@app.get("/users/", response_model=list[user_schema.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = user_crud.get_users(db, skip=skip, limit=limit)
-    return users
-
-
-@app.get("/users/{user_id}", response_model=user_schema.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = user_crud.get_user(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
 
 
 # @app.post("/users/{user_id}/items/", response_model=schemas.Item)
