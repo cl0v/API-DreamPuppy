@@ -8,6 +8,7 @@ class Puppy(Base):
     __tablename__ = "puppies"
 
     id = Column(Integer, primary_key=True, nullable=False)
+    breed = Column(Integer, ForeignKey("breeds.id"), nullable=False)
     microchip = Column(Integer, ForeignKey("microschips.id"), nullable=True)
     minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
 
