@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
 from gallery.database import get_db
-from gallery import models
+from gallery.models import user
 from gallery.env import SECRET_KEY
 
 
@@ -58,10 +58,10 @@ def authenticate_user_credentials(
 ) -> Tuple[Token | None, int | None]:
     hashed_password = get_password_hash(password)
     credentials = (
-        db.query(models.UserCredentials)
+        db.query(user.UserCredentials)
         .filter(
-            models.UserCredentials.email == username
-            and models.UserCredentials.pwd == hashed_password
+            user.UserCredentials.email == username
+            and user.UserCredentials.pwd == hashed_password
         )
         .first()
     )
@@ -97,7 +97,7 @@ def register_user_credentials(
 
     access_token = create_access_token(data={"sub": username})
 
-    credentials = models.UserCredentials(
+    credentials = user.UserCredentials(
         email=username,
         pwd=hashed_password,
         jwt=access_token,
@@ -123,8 +123,8 @@ def add_user_id_to_credentials(
     user_id: int,
 ):
     credentials = (
-        db.query(models.UserCredentials)
-        .filter(models.UserCredentials.jwt == token)
+        db.query(user.UserCredentials)
+        .filter(user.UserCredentials.jwt == token)
         .first()
     )
 
@@ -156,10 +156,10 @@ def validate_jwt(
     username: str = payload.get("sub")
 
     credentials = (
-        db.query(models.UserCredentials)
+        db.query(user.UserCredentials)
         .filter(
-            models.UserCredentials.jwt == token
-            and models.UserCredentials.email == username
+            user.UserCredentials.jwt == token
+            and user.UserCredentials.email == username
         )
         .first()
     )

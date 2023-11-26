@@ -7,8 +7,10 @@ from fastapi import Depends, FastAPI, HTTPException, status, Body, Header
 from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
+from gallery.cruds import user
 
 from gallery.database import get_db, engine
+from gallery.models import user
 from gallery.security import (
     Token,
     oauth2_scheme,
@@ -18,9 +20,9 @@ from gallery.security import (
     authenticate_user_credentials,
 )
 
-from gallery import crud, models, schemas
+from gallery.schemas import user
 
-models.Base.metadata.create_all(bind=engine)
+user.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -38,21 +40,21 @@ async def register_for_credentials(
 @app.post(
     "/users/new",
     dependencies=[Depends(validate_jwt)],
-    response_model=schemas.User,
+    response_model=user.User,
 )
 def create_user(
-    user: Annotated[schemas.UserCreate, Body()],
+    user: Annotated[user.UserCreate, Body()],
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme),
 ):
-    new_user = crud.create_user(db, user)
+    new_user = user.create_user(db, user)
     print(new_user)
     add_user_id_to_credentials(db, token, new_user.id)
 
     return new_user
 
 
-@app.post("/auth/login", response_model=schemas.UserWithToken)
+@app.post("/auth/login", response_model=user.UserWithToken)
 async def login_for_credentials(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
@@ -68,36 +70,36 @@ async def login_for_credentials(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    user = crud.get_user(db, user_id=user_id)
+    user = user.get_user(db, user_id=user_id)
 
-    return schemas.UserWithToken(**token, id=user.id, name=user.name)
-
-
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
-##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+    return user.UserWithToken(**token, id=user.id, name=user.name)
 
 
-@app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+##### A PARTIR DAQUI EH SO COISA Q N USO, EXEMPLO DA DOC OFICIAL #####
+
+
+@app.post("/users/", response_model=user.User)
+def create_user(user: user.UserCreate, db: Session = Depends(get_db)):
+    db_user = user.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    return user.create_user(db=db, user=user)
 
 
-@app.get("/users/", response_model=list[schemas.User])
+@app.get("/users/", response_model=list[user.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
+    users = user.get_users(db, skip=skip, limit=limit)
     return users
 
 
-@app.get("/users/{user_id}", response_model=schemas.User)
+@app.get("/users/{user_id}", response_model=user.User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
+    db_user = user.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user

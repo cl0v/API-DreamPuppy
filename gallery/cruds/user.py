@@ -1,13 +1,15 @@
 from sqlalchemy.orm import Session
 
-from gallery import models, schemas
+from gallery.schemas import user as schema
+from gallery.models import user as model
+
+def get_user(db: Session, user_id: int) -> model.User:
+   
+    return db.query(model.User).filter(model.User.id == user_id).first()
 
 
-def get_user(db: Session, user_id: int )-> models.User:
-    return db.query(models.User).filter(models.User.id == user_id).first()
-
-def create_user(db: Session, user: schemas.UserCreate) -> models.User:
-    db_user = models.User(cpf=user.cpf, name=user.name)
+def create_user(db: Session, user: schema.UserCreate) -> model.User:
+    db_user = user.User(cpf=user.cpf, name=user.name)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
