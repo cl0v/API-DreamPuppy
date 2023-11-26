@@ -165,6 +165,9 @@ def validate_jwt(
     user_id_str: str = payload.get("sub")
     
     if user_id_str == '':
+        user_id = None
+    else:
+        user_id = int(user_id_str)
 
     credentials = (
         db.query(user.UserCredentials)
