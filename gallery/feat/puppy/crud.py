@@ -22,7 +22,7 @@ def list_breeds(db: Session) -> list[models.BreedModel]:
     return db.query(models.BreedModel).all()
 
 
-def add_puppy(db: Session, schema: schemas.NewPuppy) -> models.PuppyModel:
+def add_puppy(db: Session, schema: schemas.NewPuppy) -> schemas.OutputNewPuppy:
     db_puppy = models.PuppyModel(
         breed=schema.breed,
         microchip=schema.microchip,

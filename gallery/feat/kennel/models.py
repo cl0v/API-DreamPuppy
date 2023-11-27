@@ -22,3 +22,10 @@ class CityModel(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, index=True, nullable=False)
     uf = Column(String, index=True, nullable=False)
+
+
+class KennelsNPuppies(Base):
+    __tablename__ = "kennels_n_puppies"
+
+    kennel_id = Column(Integer, ForeignKey("kennels.id"), nullable=False)
+    puppy_id = Column(Integer, ForeignKey("puppies.id"), nullable=False, unique=True, primary_key=True)
