@@ -36,3 +36,18 @@ def add_to_kennel_n_puppies(db: Session, kennel_id: int, puppy_id: int):
     db.add(model)
     db.commit()
     db.refresh(model)
+
+
+def list_my_puppies_ids(db: Session, kennel_id: int) -> list[int]:
+    q = (
+        db.query(models.KennelsNPuppies)
+        .filter(models.KennelsNPuppies.kennel_id == kennel_id)
+        .all()
+    )
+
+    tmp = []
+
+    for r in q:
+        tmp.append(r.puppy_id)
+
+    return tmp

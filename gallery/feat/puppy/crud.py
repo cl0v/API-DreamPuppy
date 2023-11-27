@@ -88,3 +88,12 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
 
     d["breed"] = breed.name
     return d
+
+
+def list_puppies_form_id(
+    db: Session,
+    puppies_ids: list[int],
+) -> list[models.PuppyModel]:
+    return (
+        db.query(models.PuppyModel).filter(models.PuppyModel.id.in_(puppies_ids)).all()
+    )

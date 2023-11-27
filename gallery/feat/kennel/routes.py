@@ -42,3 +42,17 @@ def add_puppy(
     crud.add_to_kennel_n_puppies(db, kennel_id, n_puppy.id)
 
     return n_puppy
+
+
+@router.get(
+    "/kennels/{kennel_id}/puppies/",
+    response_model=list[OutputNewPuppy],
+    dependencies=[Depends(ignore_non_admins)],
+)
+def list_puppies_from_kennel(
+    kennel_id: int,
+    db: Session = Depends(get_db),
+):
+    ids = crud.list_my_puppies_ids(db, kennel_id)
+    tmp = puppy_crud.list_puppies_form_id(db, ids)
+    return tmp
