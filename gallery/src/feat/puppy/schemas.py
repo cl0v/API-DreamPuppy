@@ -1,40 +1,40 @@
 from pydantic import BaseModel
 
 
-class Microchip(BaseModel):
-    brand: str
+# class Vermifuges(BaseModel):
+#     brand: str
+#     date: str
 
 
-class Vermifuges(BaseModel):
-    brand: str
-    date: str
+# class Vaccines(BaseModel):
+#     brand: str
+#     type: str
+#     date: str
 
 
-class Vaccines(BaseModel):
-    brand: str
-    type: str
-    date: str
+# class PuppySchema(BaseModel):
+#     id: int
+#     breed: int
+#     # microchip: Microchip
+#     # vermifuges: list[Vermifuges]
+#     # vaccines: list[Vaccines]
 
 
-class PuppySchema(BaseModel):
+class NewPuppy(BaseModel):
+    breed: int
+    microchip: bool
+    price: int
+    # vermifuges: list[Vermifuges]
+    # vaccines: list[Vaccines]
+
+
+class OutputPuppy(NewPuppy):
     id: int
-    breed: int
-    microchip: Microchip
-    vermifuges: list[Vermifuges]
-    vaccines: list[Vaccines]
 
-
-class NewPuppySchema(BaseModel):
-    breed: int
-    microchip: Microchip
-    vermifuges: list[Vermifuges]
-    vaccines: list[Vaccines]
-
-
-class NewBreedSchema(BaseModel):
+class NewBreed(BaseModel):
     name: str
 
-class NewBreedOutput(NewBreedSchema):
+class OutputBreed(NewBreed):
     id: int
 
 # Primeiro adicionar o filhote.
@@ -46,7 +46,7 @@ from sqlalchemy.sql import func
 add_puppy_json = {
     # (id) Lulu da Pomerânia
     "breed": 1,
-    "microchip": {"brand": "sim"},
+    "microchip": True, 
     "vermifuges": [{"brand": "ENDAL® PLUS - MSD", "date": func.now()}],
     "vaccines": [{"brand": "Bio Max", "type": "V8", "date": func.now()}],
 }

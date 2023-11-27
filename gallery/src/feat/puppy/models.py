@@ -1,16 +1,18 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
 from gallery.database import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 
-# class PuppyModel(Base):
-#     __tablename__ = "puppies"
+class PuppyModel(Base):
+    __tablename__ = "puppies"
 
-#     id = Column(Integer, primary_key=True, nullable=False)
-#     breed = Column(Integer, ForeignKey("breeds.id"), nullable=False)
-#     microchip = Column(Integer, ForeignKey("microschips.id"), nullable=True)
-#     minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
+    id = Column(Integer, primary_key=True, nullable=False)
+    breed = Column(Integer, ForeignKey("breeds.id"), nullable=False)
+    price = Column(Integer, nullable=False)
+    minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
+    microchip = Column(Boolean, default=False, nullable=False)
+
 
 #     cover_img = Column(String, nullable=False)
 
