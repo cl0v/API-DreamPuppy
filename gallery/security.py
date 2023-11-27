@@ -20,7 +20,10 @@ ACCESS_TOKEN_EXPIRE_DAYS = 30
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl="token",
+    scopes={"full_name": "Nome de usuário"},
+)
 
 
 class Token(BaseModel):
@@ -163,8 +166,8 @@ def validate_jwt(
         )
 
     user_id_str: str = payload.get("sub")
-    
-    if user_id_str == '':
+
+    if user_id_str == "":
         user_id = None
     else:
         user_id = int(user_id_str)
@@ -184,3 +187,20 @@ def validate_jwt(
             detail="Credenciais não encontradas",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+
+def user_id_from_token(token: Annotated[str, Security(oauth2_scheme)]) -> int:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    
+    user_id_str = payload.get("sub")
+
+    if user_id_str == "":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Não foi possível encontrar o cadastro de usuário",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    user_id = int(user_id_str)
+
+    return user_id

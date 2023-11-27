@@ -12,6 +12,8 @@ class Puppy(Base):
     microchip = Column(Integer, ForeignKey("microschips.id"), nullable=True)
     minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
 
+    cover_img = Column(String, nullable=False)
+
     pictures = relationship("Media", back_populates="medias", uselist=True)
     vaccines = relationship("Vaccine", back_populates="vaccines", uselist=True)
     vermifuges = relationship("Vermifuge", back_populates="vermifuges", uselist=True)
@@ -54,11 +56,9 @@ class Media(Base):
     __tablename__ = "medias"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    link = Column(String, unique=True)  # nullable?
-    puppy_id = Column(Integer, ForeignKey("puppies.id"), nullable=False)
+    url = Column(String, unique=True)  # nullable?
+    puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
     uploaded_at = Column(DateTime, nullable=False, default=func.now())
-
-    puppy = relationship("Puppy", back_populates="pictures", uselist=False)
 
 
 class Breed(Base):
