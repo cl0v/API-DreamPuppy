@@ -31,6 +31,12 @@ class NewPuppySchema(BaseModel):
     vaccines: list[Vaccines]
 
 
+class NewBreedSchema(BaseModel):
+    name: str
+
+class NewBreedOutput(NewBreedSchema):
+    id: int
+
 # Primeiro adicionar o filhote.
 # Depois adicionar fotos.
 # 2 ENDPOINTS
