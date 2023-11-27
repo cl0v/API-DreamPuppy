@@ -24,6 +24,7 @@ def get_puppies_cover_list(db: Session, amount: int = 9) -> list[schemas.Gallery
             and puppy_models.PuppyModel.visible == VISIBLE_DEFAULT
         )
         .limit(amount)
+        .all()
     )
 
     return q

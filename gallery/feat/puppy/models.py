@@ -58,7 +58,7 @@ class Media(Base):
     __tablename__ = "medias"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    url = Column(String, unique=True)
+    url = Column(String, nullable=False)
     puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
     uploaded_at = Column(DateTime, nullable=False, default=func.now())
 

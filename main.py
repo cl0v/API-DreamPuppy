@@ -44,6 +44,6 @@ async def puppy_details_exception_handler(request: Request, exc: PuppyDetailsExc
 #     responses={418: {"description": "I'm a teapot"}},
 # )
 
-
+# (PROD) Remover after debug
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
