@@ -3,10 +3,10 @@ from gallery.database import engine, Base
 from fastapi.responses import JSONResponse
 from fastapi import Request, FastAPI
 
-from gallery.src.feat.gallery.routes import router as gallery_router
-from gallery.src.feat.puppy.routes import router as puppy_router
-from gallery.src.feat.gallery.exceptions import GalleryException
-from gallery.src.feat.puppy.exceptions import PuppyDetailsException
+from gallery.feat.gallery.routes import router as gallery_router
+from gallery.feat.puppy.routes import router as puppy_router
+from gallery.feat.gallery.exceptions import GalleryException
+from gallery.feat.puppy.exceptions import PuppyDetailsException
 
 Base.metadata.create_all(bind=engine)
 

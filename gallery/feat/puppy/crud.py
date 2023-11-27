@@ -56,6 +56,8 @@ def add_puppy(db: Session, schema: schemas.NewPuppy) -> models.PuppyModel:
 
 
 def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
+    print('Entrou??')
+    
     model = (
         db.query(models.PuppyModel)
         .options(
@@ -75,3 +77,5 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
 
     d["breed"] = breed.name
     return d
+
+

@@ -12,6 +12,8 @@ class PuppyModel(Base):
     price = Column(Integer, nullable=False)
     minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
     microchip = Column(Boolean, default=False, nullable=False)
+    visible = Column(Boolean, default=False, nullable=False)
+    reviewed = Column(Boolean, default=False, nullable=False)
 
     vermifuges = relationship("Vermifuge", back_populates="pet", uselist=True)
     vaccines = relationship("Vaccine", back_populates="pet", uselist=True)
