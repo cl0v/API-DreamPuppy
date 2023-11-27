@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 class Microchip(BaseModel):
     brand: str
-    number: str
 
 
 class Vermifuges(BaseModel):
@@ -17,7 +16,15 @@ class Vaccines(BaseModel):
     date: str
 
 
-class PuppyBase(BaseModel):
+class PuppySchema(BaseModel):
+    id: int
+    breed: int
+    microchip: Microchip
+    vermifuges: list[Vermifuges]
+    vaccines: list[Vaccines]
+
+
+class NewPuppySchema(BaseModel):
     breed: int
     microchip: Microchip
     vermifuges: list[Vermifuges]
@@ -31,7 +38,8 @@ class PuppyBase(BaseModel):
 from sqlalchemy.sql import func
 
 add_puppy_json = {
-    "breed": 1,  # (id) Lulu da Pomerânia
+    # (id) Lulu da Pomerânia
+    "breed": 1,
     "microchip": {"brand": "sim"},
     "vermifuges": [{"brand": "ENDAL® PLUS - MSD", "date": func.now()}],
     "vaccines": [{"brand": "Bio Max", "type": "V8", "date": func.now()}],

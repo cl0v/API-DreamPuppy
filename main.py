@@ -22,6 +22,7 @@ from fastapi.responses import JSONResponse
 from fastapi import Request
 
 from gallery.src.feat.gallery.routes import router as gallery_router
+from gallery.src.feat.puppy.routes import router as puppy_router
 from gallery.src.feat.gallery.exceptions import GalleryException
 
 Base.metadata.create_all(bind=engine)
@@ -29,6 +30,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 app.include_router(gallery_router)
+app.include_router(puppy_router)
 
 
 @app.exception_handler(GalleryException)

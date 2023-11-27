@@ -1,10 +1,10 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from gallery.database import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 
-class Puppy(Base):
+class PuppyModel(Base):
     __tablename__ = "puppies"
 
     id = Column(Integer, primary_key=True, nullable=False)
