@@ -11,14 +11,14 @@ from sqlalchemy.exc import IntegrityError
 
 from gallery.database import get_db
 from gallery.models import user
-from gallery.env import SECRET_KEY
+from gallery.env import SECRET_KEY, ADMIN_JWT
 
 
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 
 
-admin_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI"
+admin_token = ADMIN_JWT
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
