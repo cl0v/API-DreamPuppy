@@ -12,11 +12,16 @@ router = APIRouter()
     response_model=schemas.OutputNewBreed,
     dependencies=[Depends(ignore_non_admins)],
 )
-async def add_breed(
-    breed: schemas.NewBreed,
-    db: Session = Depends(get_db),
-):
+async def add_breed(breed: schemas.NewBreed, db: Session = Depends(get_db)):
     return crud.add_breed(db, breed)
+
+
+@router.get(
+    "/breeds/list",
+    response_model=list[schemas.OutputNewBreed],
+)
+def list_breeds(db: Session = Depends(get_db)):
+    return crud.list_breeds(db)
 
 
 @router.post(

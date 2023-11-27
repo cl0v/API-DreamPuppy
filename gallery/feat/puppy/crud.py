@@ -18,6 +18,10 @@ def add_breed(db: Session, breed: schemas.NewPuppy) -> models.BreedModel:
     return new_breed
 
 
+def list_breeds(db: Session) -> list[models.BreedModel]:
+    return db.query(models.BreedModel).all()
+
+
 def add_puppy(db: Session, schema: schemas.NewPuppy) -> models.PuppyModel:
     db_puppy = models.PuppyModel(
         breed=schema.breed,

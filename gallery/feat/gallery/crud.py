@@ -11,7 +11,7 @@ REVIEWED_DEFAULT = True
 VISIBLE_DEFAULT = True
 
 
-def get_puppies_cover_list(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
+def fill_gallery(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
     if amount > LIMIT_AMOUNT:
         raise exceptions.GalleryException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -20,8 +20,8 @@ def get_puppies_cover_list(db: Session, amount: int = 9) -> list[schemas.Gallery
     q = (
         db.query(puppy_models.PuppyModel)
         .filter(
-            puppy_models.PuppyModel.reviewed == REVIEWED_DEFAULT
-            and puppy_models.PuppyModel.visible == VISIBLE_DEFAULT
+            puppy_models.PuppyModel.reviewed == REVIEWED_DEFAULT,
+            puppy_models.PuppyModel.visible == VISIBLE_DEFAULT,
         )
         .limit(amount)
         .all()
