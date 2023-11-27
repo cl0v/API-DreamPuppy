@@ -21,7 +21,7 @@ async def add_breed(
 
 @router.post(
     "/puppies/new",
-    response_model=schemas.OutputPuppy,
+    response_model=schemas.OutputNewPuppy,
     dependencies=[Depends(ignore_non_admins)],
 )
 async def add_puppy(
@@ -34,7 +34,7 @@ async def add_puppy(
 
 @router.get(
     "/puppies/{puppy_id}",
-    response_model=schemas.OutputPuppy,
+    response_model=schemas.NewPuppy,
 )
 def get_puppy(
     puppy_id: int,

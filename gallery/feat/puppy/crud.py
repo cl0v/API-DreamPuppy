@@ -19,11 +19,14 @@ def add_breed(db: Session, breed: schemas.NewPuppy) -> models.BreedModel:
 
 
 def add_puppy(db: Session, schema: schemas.NewPuppy) -> models.PuppyModel:
-    db_puppy = models.PuppyModel(schema.dict())
-    #     breed=schema.breed,
-    #     price=schema.price,
-    #     microchip=schema.microchip,
-    # )
+    db_puppy = models.PuppyModel(
+        breed=schema.breed,
+        microchip=schema.microchip,
+        price=schema.price,
+        birth=schema.birth,
+        gender=schema.gender,
+        minimum_age_departure_in_days=schema.minimum_age_departure_in_days,
+    )
 
     db.add(db_puppy)
     db.commit()
@@ -56,8 +59,6 @@ def add_puppy(db: Session, schema: schemas.NewPuppy) -> models.PuppyModel:
 
 
 def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
-    print('Entrou??')
-    
     model = (
         db.query(models.PuppyModel)
         .options(
@@ -77,5 +78,3 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
 
     d["breed"] = breed.name
     return d
-
-

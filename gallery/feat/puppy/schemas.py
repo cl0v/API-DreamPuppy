@@ -33,16 +33,14 @@ class NewPuppy(BaseModel):
     price: int
     gender: int
     birth: datetime
+
+    # Relational
     vermifuges: list[Vermifuges]
     vaccines: list[Vaccines]
     medias: list[Media]
 
-
-class OutputPuppy(NewPuppy):
+class OutputNewPuppy(NewPuppy):
     id: int
-    breed: str
-
-
 # Primeiro adicionar o filhote.
 # Depois adicionar fotos.
 # 2 ENDPOINTS
