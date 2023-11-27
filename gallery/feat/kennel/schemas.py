@@ -1,6 +1,11 @@
 from pydantic import BaseModel
 
 
+class OutputCity(BaseModel):
+    name: str
+    uf: str
+
+
 class CreateKennel(BaseModel):
     name: str
     phone: str
@@ -12,6 +17,7 @@ class CreateKennel(BaseModel):
 
 class OutputKennel(CreateKennel):
     id: int
+    city: OutputCity
 
 
 example_json = {

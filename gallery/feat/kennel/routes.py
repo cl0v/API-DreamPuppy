@@ -39,7 +39,7 @@ def add_puppy(
     db: Session = Depends(get_db),
 ):
     n_puppy = puppy_crud.add_puppy(db, puppy)
-    crud.add_to_kennel_n_puppies(db, kennel_id, n_puppy.id)
+    crud.relate_to_kennel_n_puppies(db, kennel_id, n_puppy.id)
 
     return n_puppy
 

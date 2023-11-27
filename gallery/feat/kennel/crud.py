@@ -28,10 +28,15 @@ def get_kennel(db: Session, kennel_id: int) -> models.KennelModel:
             status_code=status.HTTP_404_NOT_FOUND,
             message="Canil não encontrado.",
         )
+
+    city = db.query(models.CityModel).filter(models.CityModel.id == model.city).first()
+
+    d = model.__dict__
+    d["city"] = city
     return model
 
 
-def add_to_kennel_n_puppies(db: Session, kennel_id: int, puppy_id: int):
+def relate_to_kennel_n_puppies(db: Session, kennel_id: int, puppy_id: int):
     model = models.KennelsNPuppies(kennel_id=kennel_id, puppy_id=puppy_id)
     db.add(model)
     db.commit()
