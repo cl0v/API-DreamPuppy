@@ -17,6 +17,9 @@ class CreateKennel(BaseModel):
 
 class OutputKennel(CreateKennel):
     id: int
+
+class OutputKennelWithCitySchema(CreateKennel):
+    id: int
     city: OutputCity
 
 

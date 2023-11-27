@@ -22,7 +22,7 @@ async def add_kennel(kennel: schemas.CreateKennel, db: Session = Depends(get_db)
 
 @router.get(
     "/kennels/{kennel_id}",
-    response_model=schemas.OutputKennel,
+    response_model=schemas.OutputKennelWithCitySchema,
 )
 async def get_kennel(kennel_id: int, db: Session = Depends(get_db)):
     return crud.get_kennel(db, kennel_id)
