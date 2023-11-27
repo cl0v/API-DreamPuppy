@@ -18,12 +18,23 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_DAYS = 30
 
 
+admin_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI"
+
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="token",
     scopes={"full_name": "Nome de usuário"},
 )
+
+
+def ignore_non_admins(token: Annotated[str, Security(oauth2_scheme)]):
+    if token != admin_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Usuário não autorizado",
+        )
 
 
 class Token(BaseModel):
@@ -191,7 +202,7 @@ def validate_jwt(
 
 def user_id_from_token(token: Annotated[str, Security(oauth2_scheme)]) -> int:
     payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    
+
     user_id_str = payload.get("sub")
 
     if user_id_str == "":
@@ -200,7 +211,7 @@ def user_id_from_token(token: Annotated[str, Security(oauth2_scheme)]) -> int:
             detail="Não foi possível encontrar o cadastro de usuário",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    
+
     user_id = int(user_id_str)
 
     return user_id

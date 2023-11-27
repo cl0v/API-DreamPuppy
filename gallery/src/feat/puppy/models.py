@@ -13,10 +13,10 @@ class PuppyModel(Base):
     minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
     microchip = Column(Boolean, default=False, nullable=False)
 
-    vermifuges = relationship("Vermifuge", uselist=True)
-    vaccines = relationship("Vaccine", uselist=True)
-    # cover_img = Column(String, nullable=True)
+    vermifuges = relationship("Vermifuge", back_populates="pet", uselist=True)
+    vaccines = relationship("Vaccine", back_populates="pet", uselist=True)
 
+    # cover_img = Column(String, nullable=True)
     # pictures = relationship("Media", back_populates="medias", uselist=True)
 
 
@@ -33,6 +33,8 @@ class Vaccine(Base):
     type = Column(String, nullable=True)  # V6, V8, V10...
     date = Column(DateTime, nullable=True)
 
+    pet = relationship("PuppyModel", back_populates="vaccines")
+
 
 # Lista de vermifugos
 class Vermifuge(Base):
@@ -43,24 +45,19 @@ class Vermifuge(Base):
     brand = Column(String, nullable=True)  #
     date = Column(DateTime, nullable=True)
 
-
-# # O unico microchip que o cachorro pode ter
-# class Microchip(Base):
-#     __tablename__ = "microschips"
-
-#     id = Column(Integer, primary_key=True, nullable=False)
-#     brand = Column(String, nullable=True)
+    pet = relationship("PuppyModel", back_populates="vermifuges")
 
 
-# # Qualquer tipo de mídia [publica] que envolve os filhotes (.jpg, .png, .mp4, .mp3, .gif)
+# Qualquer tipo de mídia [publica] que envolve os filhotes (.jpg, .png, .mp4, .mp3, .gif)
 # class Media(Base):
 #     __tablename__ = "medias"
 
 #     id = Column(Integer, primary_key=True, nullable=False)
-#     url = Column(String, unique=True)  # nullable?
+#     url = Column(String, unique=True)
 #     puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
 #     uploaded_at = Column(DateTime, nullable=False, default=func.now())
 
+#     pet = relationship("PuppyModel", back_populates="pictures")
 
 class BreedModel(Base):
     __tablename__ = "breeds"
