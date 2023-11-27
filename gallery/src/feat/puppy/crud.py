@@ -11,19 +11,32 @@ def add_breed(db: Session, breed: schemas.NewPuppy) -> models.BreedModel:
 
 
 def add_puppy(db: Session, schema: schemas.NewPuppy) -> models.PuppyModel:
-    # # Criando objetos Vaccine
-    # vaccines = [vaccine_data.model_dump() for vaccine_data in schema.vaccines]
-
-    # # Criando objetos Vermifuge
-    # vermifuges = [vermifuge_data.model_dump() for vermifuge_data in schema.vermifuges]
-
-    # Criando o PuppyModel com os objetos relacionados
-    dump = schema.model_dump()
-    db_puppy = models.PuppyModel(**dump)
+    db_puppy = models.PuppyModel(
+        breed=schema.breed,
+        price=schema.price,
+        microchip=schema.microchip,
+    )
 
     db.add(db_puppy)
     db.commit()
     db.refresh(db_puppy)
+
+    for vermifuge in schema.vermifuges:
+        db_vermifuge = models.Vermifuge(
+            **vermifuge.model_dump(),
+            puppy=db_puppy.id,
+        )
+        db.add(db_vermifuge)
+
+    for vaccine in schema.vaccines:
+        db_vaccine = models.Vaccine(
+            **vaccine.model_dump(),
+            puppy=db_puppy.id,
+        )
+        db.add(db_vaccine)
+
+    db.commit()
+
     return db_puppy
 
 

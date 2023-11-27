@@ -1,15 +1,16 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 
-# class Vermifuges(BaseModel):
-#     brand: str
-#     date: str
+class Vermifuges(BaseModel):
+    brand: str
+    date: datetime
 
 
-# class Vaccines(BaseModel):
-#     brand: str
-#     type: str
-#     date: str
+class Vaccines(BaseModel):
+    brand: str
+    type: str
+    date: datetime
 
 
 # class PuppySchema(BaseModel):
@@ -24,18 +25,21 @@ class NewPuppy(BaseModel):
     breed: int
     microchip: bool
     price: int
-    # vermifuges: list[Vermifuges]
-    # vaccines: list[Vaccines]
+    vermifuges: list[Vermifuges]
+    vaccines: list[Vaccines]
 
 
 class OutputPuppy(NewPuppy):
     id: int
 
+
 class NewBreed(BaseModel):
     name: str
 
+
 class OutputBreed(NewBreed):
     id: int
+
 
 # Primeiro adicionar o filhote.
 # Depois adicionar fotos.
@@ -46,7 +50,7 @@ from sqlalchemy.sql import func
 add_puppy_json = {
     # (id) Lulu da Pomerânia
     "breed": 1,
-    "microchip": True, 
+    "microchip": True,
     "vermifuges": [{"brand": "ENDAL® PLUS - MSD", "date": func.now()}],
     "vaccines": [{"brand": "Bio Max", "type": "V8", "date": func.now()}],
 }

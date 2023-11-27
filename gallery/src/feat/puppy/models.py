@@ -13,36 +13,35 @@ class PuppyModel(Base):
     minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
     microchip = Column(Boolean, default=False, nullable=False)
 
+    vermifuges = relationship("Vermifuge", uselist=True)
+    vaccines = relationship("Vaccine", uselist=True)
+    # cover_img = Column(String, nullable=True)
 
-#     cover_img = Column(String, nullable=False)
-
-#     # pictures = relationship("Media", back_populates="medias", uselist=True)
-#     vaccines = relationship("Vaccine", back_populates="vaccines", uselist=True)
-#     vermifuges = relationship("Vermifuge", back_populates="vermifuges", uselist=True)
-
-
-# # Lista de vacinas
-# ## Leitura: https://www.petlove.com.br/dicas/vacinas-de-cachorro
-# class Vaccine(Base):
-#     __tablename__ = "vaccines"
-
-#     id = Column(Integer, primary_key=True, nullable=False)
-#     puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
-#     brand = Column(
-#         String, nullable=True
-#     )  # (Exemplo pra V8): Recombitek® C6/CV da Merial, Vanguard® HTLP 5/CV-L da Pfizer, Quantum® Dog DA2PPvL CV da Intervet Shering plough e Canigen® CH(A2) ppi/LCv da Virbac.
-#     type = Column(String, nullable=True)  # V6, V8, V10...
-#     date = Column(DateTime, nullable=True)
+    # pictures = relationship("Media", back_populates="medias", uselist=True)
 
 
-# # Lista de vermifugos
-# class Vermifuge(Base):
-#     __tablename__ = "vermifuges"
+# Lista de vacinas
+## Leitura: https://www.petlove.com.br/dicas/vacinas-de-cachorro
+class Vaccine(Base):
+    __tablename__ = "vaccines"
 
-#     id = Column(Integer, primary_key=True, nullable=False)
-#     puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
-#     brand = Column(String, nullable=True)  #
-#     date = Column(DateTime, nullable=True)
+    id = Column(Integer, primary_key=True, nullable=False)
+    puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
+    brand = Column(
+        String, nullable=True
+    )  # (Exemplo pra V8): Recombitek® C6/CV da Merial, Vanguard® HTLP 5/CV-L da Pfizer, Quantum® Dog DA2PPvL CV da Intervet Shering plough e Canigen® CH(A2) ppi/LCv da Virbac.
+    type = Column(String, nullable=True)  # V6, V8, V10...
+    date = Column(DateTime, nullable=True)
+
+
+# Lista de vermifugos
+class Vermifuge(Base):
+    __tablename__ = "vermifuges"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
+    brand = Column(String, nullable=True)  #
+    date = Column(DateTime, nullable=True)
 
 
 # # O unico microchip que o cachorro pode ter
