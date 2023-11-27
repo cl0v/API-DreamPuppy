@@ -19,11 +19,11 @@ def add_breed(db: Session, breed: schemas.NewPuppy) -> models.BreedModel:
 
 
 def add_puppy(db: Session, schema: schemas.NewPuppy) -> models.PuppyModel:
-    db_puppy = models.PuppyModel(
-        breed=schema.breed,
-        price=schema.price,
-        microchip=schema.microchip,
-    )
+    db_puppy = models.PuppyModel(schema.dict())
+    #     breed=schema.breed,
+    #     price=schema.price,
+    #     microchip=schema.microchip,
+    # )
 
     db.add(db_puppy)
     db.commit()

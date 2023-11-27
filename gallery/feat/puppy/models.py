@@ -7,19 +7,25 @@ from sqlalchemy.sql import func
 class PuppyModel(Base):
     __tablename__ = "puppies"
 
+    # Form
     id = Column(Integer, primary_key=True, nullable=False)
-    breed = Column(Integer, ForeignKey("breeds.id"), nullable=False)
-    price = Column(Integer, nullable=False)
-    minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
-    microchip = Column(Boolean, default=False, nullable=False)
-    visible = Column(Boolean, default=False, nullable=False)
-    reviewed = Column(Boolean, default=False, nullable=False)
+    breed = Column(Integer, ForeignKey("breeds.id"), nullable=False, index=True)
+    medias = relationship("Media", back_populates="pet", cascade="all, delete-orphan")
+    price = Column(Integer, nullable=False, index=True)
+    birth = Column(DateTime, index=True)
+    gender = Column(Integer, nullable=True, index=True)
 
+    # Extras + Valor
+    microchip = Column(Boolean, default=False, nullable=False)
     vermifuges = relationship("Vermifuge", back_populates="pet", uselist=True)
     vaccines = relationship("Vaccine", back_populates="pet", uselist=True)
 
-    # Relacionamento para Media
-    medias = relationship("Media", back_populates="pet", cascade="all, delete-orphan")
+    # Operacao
+    visible = Column(Boolean, default=False, nullable=False)
+    reviewed = Column(Boolean, default=False, nullable=False)
+
+    # Invisivel; Auxiliar
+    minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
 
     # cover_img = Column(String, nullable=True)
     # pictures = relationship("Media", back_populates="medias", uselist=True)

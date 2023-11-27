@@ -31,6 +31,8 @@ class NewPuppy(BaseModel):
     microchip: bool
     minimum_age_departure_in_days: int | None = None
     price: int
+    gender: int
+    birth: datetime
     vermifuges: list[Vermifuges]
     vaccines: list[Vaccines]
     medias: list[Media]

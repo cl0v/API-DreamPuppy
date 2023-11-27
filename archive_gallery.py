@@ -12,7 +12,6 @@ class PetModel(BaseModel):
     coverUrl: str
     # ... Todos os dados do pet.
 
-
 pets = [
     PetModel(id=1, breed="Pug", coverUrl="https://i.imgur.com/ajzXLgu.jpeg"),
     PetModel(id=2, breed="Shih-Tzu", coverUrl="https://i.imgur.com/jIFeQdT.jpeg"),
