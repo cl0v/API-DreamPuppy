@@ -2,6 +2,14 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
+class NewBreed(BaseModel):
+    name: str
+
+
+class OutputBreed(NewBreed):
+    id: int
+
+
 class Vermifuges(BaseModel):
     brand: str
     date: datetime
@@ -13,32 +21,24 @@ class Vaccines(BaseModel):
     date: datetime
 
 
-# class PuppySchema(BaseModel):
-#     id: int
-#     breed: int
-#     # microchip: Microchip
-#     # vermifuges: list[Vermifuges]
-#     # vaccines: list[Vaccines]
+class Media(BaseModel):
+    url: str
+    uploaded_at: datetime | None = None
 
 
 class NewPuppy(BaseModel):
     breed: int
     microchip: bool
+    minimum_age_departure_in_days: int | None = None
     price: int
     vermifuges: list[Vermifuges]
     vaccines: list[Vaccines]
+    medias: list[Media]
 
 
 class OutputPuppy(NewPuppy):
     id: int
-
-
-class NewBreed(BaseModel):
-    name: str
-
-
-class OutputBreed(NewBreed):
-    id: int
+    breed: str
 
 
 # Primeiro adicionar o filhote.

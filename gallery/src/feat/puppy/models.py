@@ -16,6 +16,9 @@ class PuppyModel(Base):
     vermifuges = relationship("Vermifuge", back_populates="pet", uselist=True)
     vaccines = relationship("Vaccine", back_populates="pet", uselist=True)
 
+    # Relacionamento para Media
+    medias = relationship("Media", back_populates="pet", cascade="all, delete-orphan")
+
     # cover_img = Column(String, nullable=True)
     # pictures = relationship("Media", back_populates="medias", uselist=True)
 
@@ -49,15 +52,16 @@ class Vermifuge(Base):
 
 
 # Qualquer tipo de mídia [publica] que envolve os filhotes (.jpg, .png, .mp4, .mp3, .gif)
-# class Media(Base):
-#     __tablename__ = "medias"
+class Media(Base):
+    __tablename__ = "medias"
 
-#     id = Column(Integer, primary_key=True, nullable=False)
-#     url = Column(String, unique=True)
-#     puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
-#     uploaded_at = Column(DateTime, nullable=False, default=func.now())
+    id = Column(Integer, primary_key=True, nullable=False)
+    url = Column(String, unique=True)
+    puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
+    uploaded_at = Column(DateTime, nullable=False, default=func.now())
 
-#     pet = relationship("PuppyModel", back_populates="pictures")
+    pet = relationship("PuppyModel", back_populates="medias")
+
 
 class BreedModel(Base):
     __tablename__ = "breeds"
