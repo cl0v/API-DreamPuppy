@@ -70,6 +70,12 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
         .first()
     )
 
+    if not model:
+        raise exceptions.PuppyDetailsException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            message="Nenhum filhote encontrado.",
+        )
+
     breed = (
         db.query(models.BreedModel).filter(models.BreedModel.id == model.breed).first()
     )

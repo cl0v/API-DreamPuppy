@@ -34,7 +34,7 @@ async def add_puppy(
 
 @router.get(
     "/puppies/{puppy_id}",
-    response_model=schemas.NewPuppy,
+    response_model=schemas.OutputNewPuppy,
 )
 def get_puppy(
     puppy_id: int,

@@ -41,6 +41,7 @@ class NewPuppy(BaseModel):
 
 class OutputNewPuppy(NewPuppy):
     id: int
+    breed: str
 # Primeiro adicionar o filhote.
 # Depois adicionar fotos.
 # 2 ENDPOINTS
