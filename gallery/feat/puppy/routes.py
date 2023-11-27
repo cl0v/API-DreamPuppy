@@ -9,7 +9,7 @@ router = APIRouter()
 
 @router.post(
     "/breeds/new",
-    response_model=schemas.OutputBreed,
+    response_model=schemas.OutputNewBreed,
     dependencies=[Depends(ignore_non_admins)],
 )
 async def add_breed(
@@ -34,7 +34,7 @@ async def add_puppy(
 
 @router.get(
     "/puppies/{puppy_id}",
-    response_model=schemas.OutputNewPuppy,
+    response_model=schemas.OutputPuppyWithBreedStr,
 )
 def get_puppy(
     puppy_id: int,

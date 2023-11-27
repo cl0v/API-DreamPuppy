@@ -6,7 +6,7 @@ class NewBreed(BaseModel):
     name: str
 
 
-class OutputBreed(NewBreed):
+class OutputNewBreed(NewBreed):
     id: int
 
 
@@ -35,13 +35,19 @@ class NewPuppy(BaseModel):
     birth: datetime
 
     # Relational
-    vermifuges: list[Vermifuges]
-    vaccines: list[Vaccines]
+    vermifuges: list[Vermifuges] | None
+    vaccines: list[Vaccines] | None
     medias: list[Media]
+
 
 class OutputNewPuppy(NewPuppy):
     id: int
+
+
+class OutputPuppyWithBreedStr(OutputNewPuppy):
     breed: str
+
+
 # Primeiro adicionar o filhote.
 # Depois adicionar fotos.
 # 2 ENDPOINTS

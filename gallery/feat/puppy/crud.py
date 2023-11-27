@@ -54,7 +54,7 @@ def add_puppy(db: Session, schema: schemas.NewPuppy) -> models.PuppyModel:
         db.add(db_media)
 
     db.commit()
-
+    # print(db_puppy.vaccines)
     return db_puppy
 
 
