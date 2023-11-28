@@ -12,7 +12,7 @@ from gallery.feat.kennel.exceptions import KennelException
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 app.include_router(gallery_router)
 app.include_router(puppy_router)
