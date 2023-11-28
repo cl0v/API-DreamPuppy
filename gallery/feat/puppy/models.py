@@ -14,6 +14,9 @@ class PuppyModel(Base):
     price = Column(Integer, nullable=False, index=True)
     birth = Column(DateTime, index=True)
     gender = Column(Integer, nullable=True, index=True)
+    # ? O que acontece quando tento criar 2 containers com mesmo nome?
+    # hex Uuid do container de armazenamento dos arquivos e imagens.
+    container = Column(String, nullable=False, unique=True)
 
     # Extras + Valor
     microchip = Column(Boolean, default=False, nullable=False)
@@ -67,6 +70,8 @@ class Media(Base):
     url = Column(String, nullable=False)
     puppy = Column(Integer, ForeignKey("puppies.id"), nullable=False)
     uploaded_at = Column(DateTime, nullable=False, default=func.now())
+    # hex Uuid do blob da imagens. {puppy_container}/{image_blob.jpeg}
+    blob = Column(String, nullable=False, unique=False)
 
     pet = relationship("PuppyModel", back_populates="medias")
 
