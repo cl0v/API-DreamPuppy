@@ -1,5 +1,5 @@
 from .schemas import GallerySchema
-from . import crud
+from gallery.feat.gallery import crud
 from gallery.database import get_db
 from fastapi import APIRouter, Depends
 

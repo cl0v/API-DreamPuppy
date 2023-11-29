@@ -30,7 +30,7 @@ def add_puppy(
     db: Session,
     images: list[UploadFile],
     schema: schemas.PuppyRequestForm,
-) -> schemas.OutPuppy:
+) -> models.PuppyModel:
     container = uuid.uuid4().hex
     db_puppy = models.PuppyModel(
         container=container,
@@ -72,6 +72,7 @@ def add_puppy(
         db.add(media)
 
     db.commit()
+
     return db_puppy
 
 
@@ -94,7 +95,7 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
         .options(
             joinedload(models.PuppyModel.vaccines),
             joinedload(models.PuppyModel.vermifuges),
-            joinedload(models.PuppyModel.medias),
+            joinedload(models.PuppyModel.images),
         )
         .filter(models.PuppyModel.id == puppy_id)
         .first()
@@ -114,9 +115,18 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
         .first()
     )
 
+    images = (
+        db.query(models.Media)
+        .filter(
+            models.Media.puppy == model.id,
+        )
+        .all()
+    )
+
     d = model.__dict__
 
     d["breed"] = breed.name
+    d["images"] = [i.url for i in images]
     return d
 
 

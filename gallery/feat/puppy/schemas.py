@@ -65,6 +65,7 @@ class OutPuppy(BaseModel):
 
 class OutputPuppyWithBreedStr(OutPuppy):
     breed: str
+    images: list[str]
 
 
 # Primeiro adicionar o filhote.

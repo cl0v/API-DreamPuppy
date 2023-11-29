@@ -7,6 +7,19 @@ from gallery.security import ignore_non_admins
 router = APIRouter()
 
 
+# App Gallery:
+@router.get(
+    "/puppies/{puppy_id}",
+    response_model=schemas.OutputPuppyWithBreedStr,
+)
+def get_puppy(
+    puppy_id: int,
+    db: Session = Depends(get_db),
+):
+    return crud.get_puppy(db, puppy_id)
+
+
+# App Dashboard:
 @router.post(
     "/breeds/new",
     response_model=schemas.OutputNewBreed,
@@ -22,13 +35,3 @@ async def add_breed(breed: schemas.NewBreed, db: Session = Depends(get_db)):
 )
 def list_breeds(db: Session = Depends(get_db)):
     return crud.list_breeds(db)
-
-@router.get(
-    "/puppies/{puppy_id}",
-    response_model=schemas.OutputPuppyWithBreedStr,
-)
-def get_puppy(
-    puppy_id: int,
-    db: Session = Depends(get_db),
-):
-    return crud.get_puppy(db, puppy_id)

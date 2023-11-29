@@ -10,7 +10,7 @@ class PuppyModel(Base):
     # Form
     id = Column(Integer, primary_key=True, nullable=False)
     breed = Column(Integer, ForeignKey("breeds.id"), nullable=False, index=True)
-    medias = relationship("Media", back_populates="pet", cascade="all, delete-orphan")
+    images = relationship("Media", back_populates="pet", cascade="all, delete-orphan")
     price = Column(Integer, nullable=False, index=True)
     birth = Column(DateTime, index=True)
     gender = Column(Integer, nullable=True, index=True)
@@ -31,7 +31,6 @@ class PuppyModel(Base):
     minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
 
     # cover_img = Column(String, nullable=True)
-    # pictures = relationship("Media", back_populates="medias", uselist=True)
 
 
 # Lista de vacinas
@@ -73,7 +72,7 @@ class Media(Base):
     # hex Uuid do blob da imagens. {puppy_container}/{image_blob.jpeg}
     blob = Column(String, nullable=False, unique=False)
 
-    pet = relationship("PuppyModel", back_populates="medias")
+    pet = relationship("PuppyModel", back_populates="images")
 
 
 class BreedModel(Base):
