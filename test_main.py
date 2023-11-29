@@ -31,7 +31,7 @@ def test_token_add_breed():
 def test_add_breed():
     r = client.post(
         "/breeds/new",
-        data=json.dumps(add_breed_data),
+        content=json.dumps(add_breed_data),
         headers=admin_auth_header,
     )
     assert r.status_code == 200
@@ -42,7 +42,7 @@ def test_add_breed():
 def test_duplicate_add_breed():
     r = client.post(
         "/breeds/new",
-        data=json.dumps(add_breed_data),
+        content=json.dumps(add_breed_data),
         headers=admin_auth_header,
     )
     assert r.status_code == 400
