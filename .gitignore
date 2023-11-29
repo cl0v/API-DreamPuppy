@@ -6,3 +6,4 @@ notes.md
 imgmk.jpeg
 example.py
 imgs/
+.pytest_cache/
