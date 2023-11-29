@@ -27,7 +27,9 @@ def list_breeds(db: Session) -> list[models.BreedModel]:
 
 
 def add_puppy(
-    db: Session, cover: UploadFile, images: list[UploadFile], schema: schemas.PuppyRequestForm,
+    db: Session,
+    images: list[UploadFile],
+    schema: schemas.PuppyRequestForm,
 ) -> schemas.OutPuppy:
     container = uuid.uuid4().hex
     db_puppy = models.PuppyModel(
@@ -43,7 +45,6 @@ def add_puppy(
     db.add(db_puppy)
     db.commit()
     db.refresh(db_puppy)
-
 
     jsonVerm = json.loads(schema.vermifuges)
 
@@ -65,43 +66,26 @@ def add_puppy(
         db.add(db_vaccine)
 
     create_container(container)
-    
 
-    _upload_media(db, cover, db_puppy.id, container, isCover=True)
-    for image in images:
-        # _upload_media()
-        # TODO: Implementar _upload_media
-        break
-        
-    
+    for image in images["images"]:
+        media = _upload_media(image, db_puppy.id, container)
+        db.add(media)
+
     db.commit()
-    # print(db_puppy.vaccines)
     return db_puppy
 
 
-def _upload_media(db:Session, img: UploadFile, puppy: int, container: str, isCover: bool) -> models.Media:
+def _upload_media(img: UploadFile, puppy: int, container: str) -> models.Media:
     blob_id = uuid.uuid4().hex
     blob = create_blob(blob_id, container, img.content_type)
-   
+
     upload_blob(blob, img.file, img.content_type)
-    print(blob.primary_endpoint)
     model = models.Media(
-        url= blob.primary_endpoint,
-        puppy= puppy,
-        blob= blob_id,
+        url=blob.primary_endpoint,
+        puppy=puppy,
+        blob=blob_id,
     )
-    db.add(model)
     return model
-
-def _upload_cover(db:Session, cover: UploadFile, puppy_id: int) -> models.Media:
-    blob = uuid.uuid4().hex
-    raise Exception('Unimplemented')
-    model = models.Media(
-        url= '',
-        puppy= '',
-        blob= blob,
-    )
-
 
 
 def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:

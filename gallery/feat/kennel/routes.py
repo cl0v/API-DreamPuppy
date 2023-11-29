@@ -39,13 +39,12 @@ async def add_kennel(kennel: schemas.CreateKennel, db: Session = Depends(get_db)
 )
 def add_puppy(
     kennel_id: int,
-    cover: UploadFile,
     puppy: Annotated[PuppyRequestForm, Depends()],
     db: Session = Depends(get_db),
     **images: Annotated[list[UploadFile], File()],
 ):
-    n_puppy = puppy_crud.add_puppy(db, cover, images, puppy)
-    crud.relate_to_kennel_n_puppies(db, kennel_id, n_puppy.id)
+    n_puppy = puppy_crud.add_puppy(db, images=images, schema=puppy)
+    crud.relate_to_kennel_n_puppies(db, kennel_id=kennel_id, puppy_id=n_puppy.id)
 
     return n_puppy
 
