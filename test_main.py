@@ -5,6 +5,8 @@ import json
 import string
 import random
 
+# Tests: Gallery / Details / Kennel
+
 def random_string_gen(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -15,11 +17,11 @@ client = TestClient(app)
 def test_fill_gallery():
     response = client.get("/gallery")
     assert response.status_code == 200
-    for a in [{"id": 11}, {"id": 15}, {"id": 20}]:
+    for a in some_gallery_data:
         assert a in response.json()
 
 
-def test_unauthorize_add_breed():
+def test_token_add_breed():
     r = client.post("/breeds/new", data=add_breed_data)
     assert r.status_code == 401
 
@@ -58,7 +60,7 @@ def test_get_kennel():
     assert r.json() == kennel7
 
 
-def test_unauth_list_puppies_from_kennel():
+def test_token_list_puppies_from_kennel():
     r = client.get("/kennels/4/puppies/")
     assert r.status_code == 401
 
@@ -96,6 +98,8 @@ some_available_breeds = [
         {"name": "LULUZ2I", "id": 5},
         {"name": "Lulu da pom", "id": 6},
     ]
+
+some_gallery_data = [{"id": 11}, {"id": 15}, {"id": 20}]
 
 puppy2 = {
         "breed": "Pug",
