@@ -1,16 +1,18 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
 from . import schemas, models, exceptions
-from fastapi import status
+from fastapi import status, UploadFile
+import json
+from datetime import datetime
 
 
-def add_breed(db: Session, breed: schemas.NewPuppy) -> models.BreedModel:
+def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
     new_breed = models.BreedModel(**breed.model_dump())
     try:
         db.add(new_breed)
         db.commit()
         db.refresh(new_breed)
-    except IntegrityError as err:
+    except IntegrityError:
         raise exceptions.PuppyDetailsException(
             status_code=status.HTTP_400_BAD_REQUEST,
             message="Raça já cadastrada",
@@ -22,7 +24,9 @@ def list_breeds(db: Session) -> list[models.BreedModel]:
     return db.query(models.BreedModel).all()
 
 
-def add_puppy(db: Session, schema: schemas.NewPuppy) -> schemas.OutputNewPuppy:
+def add_puppy(
+    db: Session, images: list[UploadFile], schema: schemas.PuppyRequestForm
+) -> schemas.OutPuppy:
     db_puppy = models.PuppyModel(
         breed=schema.breed,
         microchip=schema.microchip,
@@ -36,30 +40,41 @@ def add_puppy(db: Session, schema: schemas.NewPuppy) -> schemas.OutputNewPuppy:
     db.commit()
     db.refresh(db_puppy)
 
-    for vermifuge in schema.vermifuges:
+    jsonVerm = json.loads(schema.vermifuges)
+
+    for j in jsonVerm:
+        j["date"] = datetime.fromisoformat(j["date"])
         db_vermifuge = models.Vermifuge(
-            **vermifuge.model_dump(),
+            **j,
             puppy=db_puppy.id,
         )
         db.add(db_vermifuge)
 
-    for vaccine in schema.vaccines:
+    jsonVacc = json.loads(schema.vaccines)
+    for j in jsonVacc:
+        j["date"] = datetime.fromisoformat(j["date"])
         db_vaccine = models.Vaccine(
-            **vaccine.model_dump(),
+            **j,
             puppy=db_puppy.id,
         )
         db.add(db_vaccine)
 
-    for media in schema.medias:
-        db_media = models.Media(
-            **media.model_dump(),
-            puppy=db_puppy.id,
-        )
-        db.add(db_media)
+    for image in images:
+        # TODO: Implementar _upload_media
+        break
+        # db_media = models.Media(
+        #     **media.model_dump(),
+        #     puppy=db_puppy.id,
+        # )
+        # db.add(db_media)
 
     db.commit()
     # print(db_puppy.vaccines)
     return db_puppy
+
+
+def _upload_media() -> models.Media:
+    pass
 
 
 def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
@@ -81,7 +96,11 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
         )
 
     breed = (
-        db.query(models.BreedModel).filter(models.BreedModel.id == model.breed).first()
+        db.query(models.BreedModel)
+        .filter(
+            models.BreedModel.id == model.breed,
+        )
+        .first()
     )
 
     d = model.__dict__
@@ -95,5 +114,11 @@ def list_puppies_form_id(
     puppies_ids: list[int],
 ) -> list[models.PuppyModel]:
     return (
-        db.query(models.PuppyModel).filter(models.PuppyModel.id.in_(puppies_ids)).all()
+        db.query(models.PuppyModel)
+        .filter(
+            models.PuppyModel.id.in_(
+                puppies_ids,
+            )
+        )
+        .all()
     )

@@ -23,20 +23,6 @@ async def add_breed(breed: schemas.NewBreed, db: Session = Depends(get_db)):
 def list_breeds(db: Session = Depends(get_db)):
     return crud.list_breeds(db)
 
-
-@router.post(
-    "/puppies/new",
-    response_model=schemas.OutputNewPuppy,
-    dependencies=[Depends(ignore_non_admins)],
-)
-async def add_puppy(
-    puppy: schemas.NewPuppy,
-    db: Session = Depends(get_db),
-):
-    tmp = crud.add_puppy(db, puppy)
-    return tmp
-
-
 @router.get(
     "/puppies/{puppy_id}",
     response_model=schemas.OutputPuppyWithBreedStr,
