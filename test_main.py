@@ -4,6 +4,7 @@ import pytest
 import json
 import string
 import random
+import os
 
 # Tests: Gallery / Details / Kennel
 
@@ -24,6 +25,7 @@ def test_fill_gallery():
 def test_token_add_breed():
     r = client.post("/breeds/new", data=add_breed_data)
     assert r.status_code == 401
+    assert r.is_client_error
 
 
 def test_add_breed():
@@ -45,6 +47,7 @@ def test_duplicate_add_breed():
     )
     assert r.status_code == 400
     assert r.json() == {"msg": "Raça já cadastrada"}
+    assert r.is_client_error
 
 
 def test_list_breeds():
@@ -63,6 +66,7 @@ def test_get_kennel():
 def test_token_list_puppies_from_kennel():
     r = client.get("/kennels/4/puppies/")
     assert r.status_code == 401
+    assert r.is_client_error
 
 
 def test_list_puppies_from_kennel():
@@ -82,6 +86,25 @@ def test_get_puppy_from_id():
     r = client.get("/puppies/2")
     assert r.status_code == 200
     assert r.json() == puppy2
+
+def test_token_add_puppy():
+    r = client.post("/kennels/4/puppies/new")
+    assert r.status_code == 401
+    assert r.is_client_error
+
+def test_fields_add_puppy():
+    r = client.post("/kennels/4/puppies/new", headers=admin_auth_header)
+    assert r.status_code == 422
+    assert r.is_client_error
+    assert r.text == puppy_body_missing_error_text
+
+
+def test_add_puppy():
+    r = client.post("/kennels/4/puppies/new", headers=admin_auth_header, data=add_puppy_json, files=puppy_images)
+    assert r.status_code == 200
+    assert r.json()['breed'] == add_puppy_json['breed']
+    assert r.json()['price'] == add_puppy_json['price']
+
 
 
 admin_auth_header = {
@@ -218,3 +241,32 @@ puppies_from_kennel4 = [
             "id": 37,
         },
     ]
+
+
+
+puppy_body_missing_error_text = '{"detail":[{"type":"missing","loc":["body","breed"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","microchip"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","price"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","gender"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","birth"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","vermifuges"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","vaccines"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","images"],"msg":"Field required","input":null,"url":"https://errors.pydantic.dev/2.3/v/missing"}]}'
+
+add_puppy_json = {"breed": 4,
+	"price": 970,
+	"gender": -1,
+	"birth": "2023-11-02T18:25:43.511000",
+	"microchip": True,
+	"minimum_age_departure_in_days": 60,
+	"vermifuges": json.dumps([
+		{
+			"brand": "HBO",
+			"date": "2023-11-22T18:25:43.511000"
+		}
+	]),
+	"vaccines": json.dumps([
+		{
+			"brand": "Bio Max",
+			"type": "V8",
+			"date": "2023-11-23T18:25:43.511000"
+		}
+	])}
+
+files = [f for f in os.listdir("./imgs")]
+puppy_images = {
+    "cover": files[0],
+    "images": files[0]}

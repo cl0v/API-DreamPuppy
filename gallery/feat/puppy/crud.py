@@ -4,6 +4,8 @@ from . import schemas, models, exceptions
 from fastapi import status, UploadFile
 import json
 from datetime import datetime
+import uuid
+from gallery.storage import create_container, create_blob, upload_blob
 
 
 def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
@@ -25,9 +27,11 @@ def list_breeds(db: Session) -> list[models.BreedModel]:
 
 
 def add_puppy(
-    db: Session, images: list[UploadFile], schema: schemas.PuppyRequestForm
+    db: Session, cover: UploadFile, images: list[UploadFile], schema: schemas.PuppyRequestForm,
 ) -> schemas.OutPuppy:
+    container = uuid.uuid4().hex
     db_puppy = models.PuppyModel(
+        container=container,
         breed=schema.breed,
         microchip=schema.microchip,
         price=schema.price,
@@ -39,6 +43,7 @@ def add_puppy(
     db.add(db_puppy)
     db.commit()
     db.refresh(db_puppy)
+
 
     jsonVerm = json.loads(schema.vermifuges)
 
@@ -59,22 +64,44 @@ def add_puppy(
         )
         db.add(db_vaccine)
 
+    create_container(container)
+    
+
+    _upload_media(db, cover, db_puppy.id, container, isCover=True)
     for image in images:
+        # _upload_media()
         # TODO: Implementar _upload_media
         break
-        # db_media = models.Media(
-        #     **media.model_dump(),
-        #     puppy=db_puppy.id,
-        # )
-        # db.add(db_media)
-
+        
+    
     db.commit()
     # print(db_puppy.vaccines)
     return db_puppy
 
 
-def _upload_media() -> models.Media:
-    pass
+def _upload_media(db:Session, img: UploadFile, puppy: int, container: str, isCover: bool) -> models.Media:
+    blob_id = uuid.uuid4().hex
+    blob = create_blob(blob_id, container, img.content_type)
+   
+    upload_blob(blob, img.file, img.content_type)
+    print(blob.primary_endpoint)
+    model = models.Media(
+        url= blob.primary_endpoint,
+        puppy= puppy,
+        blob= blob_id,
+    )
+    db.add(model)
+    return model
+
+def _upload_cover(db:Session, cover: UploadFile, puppy_id: int) -> models.Media:
+    blob = uuid.uuid4().hex
+    raise Exception('Unimplemented')
+    model = models.Media(
+        url= '',
+        puppy= '',
+        blob= blob,
+    )
+
 
 
 def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
@@ -109,7 +136,7 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
     return d
 
 
-def list_puppies_form_id(
+def list_puppies(
     db: Session,
     puppies_ids: list[int],
 ) -> list[models.PuppyModel]:

@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, File, Form, UploadFile
 # from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from gallery.database import get_db
-from . import schemas, crud, exceptions, types
+from . import schemas, crud, exceptions
 from gallery.security import ignore_non_admins
 from fastapi import status
 from gallery.feat.puppy import crud as puppy_crud
@@ -38,12 +38,13 @@ async def add_kennel(kennel: schemas.CreateKennel, db: Session = Depends(get_db)
     dependencies=[Depends(ignore_non_admins)],
 )
 def add_puppy(
-    puppy: Annotated[PuppyRequestForm, Depends()],
     kennel_id: int,
+    cover: UploadFile,
+    puppy: Annotated[PuppyRequestForm, Depends()],
     db: Session = Depends(get_db),
     **images: Annotated[list[UploadFile], File()],
 ):
-    n_puppy = puppy_crud.add_puppy(db, images, puppy)
+    n_puppy = puppy_crud.add_puppy(db, cover, images, puppy)
     crud.relate_to_kennel_n_puppies(db, kennel_id, n_puppy.id)
 
     return n_puppy
@@ -59,5 +60,5 @@ def list_puppies_from_kennel(
     db: Session = Depends(get_db),
 ):
     ids = crud.list_my_puppies_ids(db, kennel_id)
-    tmp = puppy_crud.list_puppies_form_id(db, ids)
+    tmp = puppy_crud.list_puppies(db, ids)
     return tmp
