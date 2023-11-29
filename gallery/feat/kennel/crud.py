@@ -56,3 +56,11 @@ def list_my_puppies_ids(db: Session, kennel_id: int) -> list[int]:
         tmp.append(r.puppy_id)
 
     return tmp
+
+
+def add_city(db: Session, city: schemas.OutputCity):
+    model = models.CityModel(**city.model_dump())
+    db.add(model)
+    db.commit()
+    db.refresh(model)
+    return model

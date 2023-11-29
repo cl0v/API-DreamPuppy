@@ -16,6 +16,24 @@ def random_string_gen(size=6, chars=string.ascii_uppercase + string.digits):
 client = TestClient(app)
 
 
+def test_err_token_add_city():
+    r = client.post(
+        "/cities/new", data={"name": random_string_gen(8), "uf": random_string_gen(2)}
+    )
+    assert r.status_code == 401
+    assert r.is_client_error
+
+
+def test_add_city():
+    r = client.post(
+        "/cities/new",
+        content=json.dumps({"name": "name", "uf": "uf"}),
+        headers=admin_auth_header,
+    )
+    assert r.status_code == 200
+    assert r.json() > 0
+
+
 def test_fill_gallery():
     response = client.get("/gallery")
     assert response.status_code == 200

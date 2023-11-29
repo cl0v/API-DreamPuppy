@@ -24,16 +24,7 @@ async def get_kennel(kennel_id: int, db: Session = Depends(get_db)):
     return crud.get_kennel(db, kennel_id)
 
 
-# App Dashboard:
-@router.post(
-    "/kennels/new",
-    response_model=schemas.OutputKennel,
-    dependencies=[Depends(ignore_non_admins)],
-)
-async def add_kennel(kennel: schemas.CreateKennel, db: Session = Depends(get_db)):
-    return crud.add_kennel(db, kennel)
-
-
+# App Kennel
 @router.post(
     "/kennels/{kennel_id}/puppies/new",
     response_model=int,
@@ -64,3 +55,20 @@ def list_puppies_from_kennel(
     ids = crud.list_my_puppies_ids(db, kennel_id)
     tmp = puppy_crud.list_puppies(db, ids)
     return tmp
+
+
+# App Dashboard:
+@router.post(
+    "/kennels/new",
+    response_model=schemas.OutputKennel,
+    dependencies=[Depends(ignore_non_admins)],
+)
+async def add_kennel(kennel: schemas.CreateKennel, db: Session = Depends(get_db)):
+    return crud.add_kennel(db, kennel)
+
+
+@router.post(
+    "/cities/new", dependencies=[Depends(ignore_non_admins)], response_model=int
+)
+def add_city(city: schemas.OutputCity, db: Session = Depends(get_db)):
+    return (crud.add_city(db, city)).id
