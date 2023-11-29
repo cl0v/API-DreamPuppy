@@ -16,35 +16,11 @@ def random_string_gen(size=6, chars=string.ascii_uppercase + string.digits):
 client = TestClient(app)
 
 
-def test_err_token_add_city():
-    r = client.post(
-        "/cities/new", data={"name": random_string_gen(8), "uf": random_string_gen(2)}
-    )
-    assert r.status_code == 401
-    assert r.is_client_error
-
-
-def test_add_city():
-    r = client.post(
-        "/cities/new",
-        content=json.dumps({"name": "name", "uf": "uf"}),
-        headers=admin_auth_header,
-    )
-    assert r.status_code == 200
-    assert r.json() > 0
-
-
 def test_fill_gallery():
     response = client.get("/gallery")
     assert response.status_code == 200
     for a in some_gallery_data:
         assert a in response.json()
-
-
-def test_token_add_breed():
-    r = client.post("/breeds/new", data=add_breed_data)
-    assert r.status_code == 401
-    assert r.is_client_error
 
 
 def test_add_breed():
@@ -58,7 +34,13 @@ def test_add_breed():
     assert r.json()["id"] > 0
 
 
-def test_duplicate_add_breed():
+def test_err_token_add_breed():
+    r = client.post("/breeds/new", data=add_breed_data)
+    assert r.status_code == 401
+    assert r.is_client_error
+
+
+def test_err_duplicate_add_breed():
     r = client.post(
         "/breeds/new",
         content=json.dumps(add_breed_data),
@@ -80,6 +62,41 @@ def test_get_kennel():
     r = client.get("/kennels/7")
     assert r.status_code == 200
     assert r.json() == kennel7
+
+
+def test_err_token_add_kennel():
+    r = client.post("/kennels/new")
+    assert r.is_client_error
+    assert r.status_code == 401
+
+
+def test_err_content_add_kennel():
+    r = client.post(
+        "/kennels/new",
+        headers=admin_auth_header,
+    )
+    assert r.is_client_error
+    assert r.status_code == 422
+
+
+def test_add_kennel():
+    r = client.post(
+        "/kennels/new",
+        headers=admin_auth_header,
+        content=json.dumps(kennel0),
+    )
+    assert r.status_code == 200
+    assert r.json()["id"] > 0
+
+
+def test_err_duplicate_add_kennel():
+    pytest.skip()
+    r = client.post(
+        "/kennels/new",
+        headers=admin_auth_header,
+        content=json.dumps(kennel0),
+    )
+    assert r.status_code == 409
 
 
 def test_token_list_puppies_from_kennel():
@@ -181,11 +198,23 @@ puppy2 = {
     "id": 2,
 }
 
+
+kennel0 = {
+    "name": "Canil Geize",
+    "phone": random_string_gen(9),
+    "instagram": random_string_gen(12),
+    "city": "Vitória da Conquista",
+    "uf": "BA",
+    "address": "Avenida Olivia Flores",
+    "cep": "39890000",
+}
+
 kennel7 = {
     "name": "Canil Geize",
-    "phone": "2233299833245199",
-    "instagram": "22dreamp3u2pp23.com.br",
-    "city": {"name": "Vitória da Conquista", "uf": "BA"},
+    "phone": "ssss",
+    "instagram": "ssss.com.br",
+    "city": "Vitória da Conquista",
+    "uf": "BA",
     "address": "Avenida Olivia Flores",
     "cep": "39890000",
     "id": 7,

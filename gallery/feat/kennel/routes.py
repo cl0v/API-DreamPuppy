@@ -18,7 +18,7 @@ router = APIRouter()
 # App Gallery:
 @router.get(
     "/kennels/{kennel_id}",
-    response_model=schemas.OutputKennelWithCitySchema,
+    response_model=schemas.OutputKennel,
 )
 async def get_kennel(kennel_id: int, db: Session = Depends(get_db)):
     return crud.get_kennel(db, kennel_id)
@@ -65,10 +65,3 @@ def list_puppies_from_kennel(
 )
 async def add_kennel(kennel: schemas.CreateKennel, db: Session = Depends(get_db)):
     return crud.add_kennel(db, kennel)
-
-
-@router.post(
-    "/cities/new", dependencies=[Depends(ignore_non_admins)], response_model=int
-)
-def add_city(city: schemas.OutputCity, db: Session = Depends(get_db)):
-    return (crud.add_city(db, city)).id

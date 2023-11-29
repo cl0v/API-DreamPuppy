@@ -29,10 +29,6 @@ def get_kennel(db: Session, kennel_id: int) -> models.KennelModel:
             message="Canil não encontrado.",
         )
 
-    city = db.query(models.CityModel).filter(models.CityModel.id == model.city).first()
-
-    d = model.__dict__
-    d["city"] = city
     return model
 
 
@@ -56,11 +52,3 @@ def list_my_puppies_ids(db: Session, kennel_id: int) -> list[int]:
         tmp.append(r.puppy_id)
 
     return tmp
-
-
-def add_city(db: Session, city: schemas.OutputCity):
-    model = models.CityModel(**city.model_dump())
-    db.add(model)
-    db.commit()
-    db.refresh(model)
-    return model
