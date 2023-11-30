@@ -5,11 +5,12 @@ from datetime import datetime
 import json as json
 
 
-class PuppyRequestForm():
+class PuppyRequestForm:
     def __init__(
         self,
         *,
         breed: Annotated[int, Form()],
+        pedigree: Annotated[bool, Form()],
         microchip: Annotated[bool, Form()],
         minimum_age_departure_in_days: Annotated[int | None, Form()] = 60,
         price: Annotated[int, Form()],
@@ -51,6 +52,7 @@ class Vaccines(BaseModel):
 class OutPuppy(BaseModel):
     id: int
     breed: int
+    pedigree: bool
     price: int
     gender: int
     birth: datetime
@@ -60,7 +62,6 @@ class OutPuppy(BaseModel):
     # Relational
     vermifuges: list[Vermifuges] | None
     vaccines: list[Vaccines] | None
-
 
 
 class OutputPuppyWithBreedStr(OutPuppy):

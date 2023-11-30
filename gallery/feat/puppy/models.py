@@ -12,6 +12,7 @@ class PuppyModel(Base):
     breed = Column(Integer, ForeignKey("breeds.id"), nullable=False, index=True)
     images = relationship("Media", back_populates="pet", cascade="all, delete-orphan")
     price = Column(Integer, nullable=False, index=True)
+    pedigree = Column(Boolean, default=False, nullable=False)
     birth = Column(DateTime, index=True)
     gender = Column(Integer, nullable=True, index=True)
     # ? O que acontece quando tento criar 2 containers com mesmo nome?

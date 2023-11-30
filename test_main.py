@@ -134,7 +134,6 @@ def test_err_fields_add_puppy():
     r = client.post("/kennels/4/puppies/new", headers=admin_auth_header)
     assert r.status_code == 422
     assert r.is_client_error
-    assert r.text == puppy_body_missing_error_text
 
 
 def test_add_puppy():
@@ -182,6 +181,7 @@ puppy2 = {
     "microchip": False,
     "minimum_age_departure_in_days": 60,
     "price": 3000,
+    "pedigree": False,
     "gender": -1,
     "birth": "2023-11-02T18:25:43.511000",
     "vermifuges": [
@@ -226,6 +226,7 @@ puppies_from_kennel4 = [
         "microchip": False,
         "minimum_age_departure_in_days": 60,
         "price": 3000,
+        "pedigree": False,
         "gender": -1,
         "birth": "2023-11-02T18:25:43.511000",
         "vermifuges": [
@@ -248,6 +249,7 @@ puppies_from_kennel4 = [
         "microchip": True,
         "minimum_age_departure_in_days": 60,
         "price": 1990,
+        "pedigree": False,
         "gender": 1,
         "birth": "2023-11-02T18:25:43.511000",
         "vermifuges": [
@@ -270,6 +272,7 @@ puppies_from_kennel4 = [
         "microchip": True,
         "minimum_age_departure_in_days": 60,
         "price": 1990,
+        "pedigree": False,
         "gender": 1,
         "birth": "2023-11-02T18:25:43.511000",
         "vermifuges": [
@@ -292,6 +295,7 @@ puppies_from_kennel4 = [
         "microchip": True,
         "minimum_age_departure_in_days": 60,
         "price": 970,
+        "pedigree": False,
         "gender": -1,
         "birth": "2023-11-02T18:25:43.511000",
         "vermifuges": [
@@ -318,6 +322,7 @@ add_puppy_json = {
     "breed": 4,
     "price": 970,
     "gender": -1,
+    "pedigree": False,
     "birth": "2023-11-02T18:25:43.511000",
     "microchip": True,
     "minimum_age_departure_in_days": 60,

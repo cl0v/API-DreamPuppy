@@ -135,11 +135,5 @@ def list_puppies(
     puppies_ids: list[int],
 ) -> list[models.PuppyModel]:
     return (
-        db.query(models.PuppyModel)
-        .filter(
-            models.PuppyModel.id.in_(
-                puppies_ids,
-            )
-        )
-        .all()
+        db.query(models.PuppyModel).filter(models.PuppyModel.id.in_(puppies_ids)).all()
     )
