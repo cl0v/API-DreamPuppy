@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 import uuid
 from gallery.storage import create_container, create_blob, upload_blob
+from gallery.feat.kennel.models import KennelsNPuppies
 
 
 def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
@@ -128,6 +129,16 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
     d["breed"] = breed.name
     d["images"] = [i.url for i in images]
     return d
+
+
+def get_kennel_id_from_puppy_id(db: Session, puppy_id: str) -> int:
+    q = db.query(KennelsNPuppies).filter(KennelsNPuppies.puppy_id == puppy_id).first()
+    if not q:
+        raise exceptions.PuppyDetailsException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            message="Canil não encontrado.",
+        )
+    return q.kennel_id
 
 
 def list_puppies(

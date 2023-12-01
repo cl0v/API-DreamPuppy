@@ -19,6 +19,18 @@ def get_puppy(
     return crud.get_puppy(db, puppy_id)
 
 
+# App Gallery:
+@router.get(
+    "/puppies/{puppy_id}/kennel",
+    response_model=int,
+)
+def get_puppy(
+    puppy_id: int,
+    db: Session = Depends(get_db),
+):
+    return crud.get_kennel_id_from_puppy_id(db, puppy_id)
+
+
 # App Dashboard:
 @router.post(
     "/breeds/new",
