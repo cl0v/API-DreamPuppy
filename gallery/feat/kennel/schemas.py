@@ -13,3 +13,8 @@ class CreateKennel(BaseModel):
 
 class OutputKennel(CreateKennel):
     id: int
+
+
+class OutputAddPuppy(BaseModel):
+    id: int
+    message: str = "OK"

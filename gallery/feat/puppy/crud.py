@@ -5,7 +5,7 @@ from fastapi import status, UploadFile
 import json
 from datetime import datetime
 import uuid
-from gallery.storage import create_container, create_blob, upload_blob
+from gallery.feat.puppy.s3_storage import upload_img, get_url_by_key
 from gallery.feat.kennel.models import KennelsNPuppies
 
 
@@ -32,9 +32,9 @@ def add_puppy(
     images: list[UploadFile],
     schema: schemas.PuppyRequestForm,
 ) -> models.PuppyModel:
-    container = uuid.uuid4().hex
+    puppy_uuid = uuid.uuid4().hex
     db_puppy = models.PuppyModel(
-        container=container,
+        uuid=puppy_uuid,
         breed=schema.breed,
         microchip=schema.microchip,
         price=schema.price,
@@ -43,55 +43,66 @@ def add_puppy(
         minimum_age_departure_in_days=schema.minimum_age_departure_in_days,
     )
 
-    db.add(db_puppy)
-    db.commit()
-    db.refresh(db_puppy)
-
     jsonVerm = json.loads(schema.vermifuges)
-
+    tmpListVerm: list[models.Vermifuge] = []
     for j in jsonVerm:
         j["date"] = datetime.fromisoformat(j["date"])
         db_vermifuge = models.Vermifuge(
             **j,
-            puppy=db_puppy.id,
         )
-        db.add(db_vermifuge)
+        tmpListVerm.append(db_vermifuge)
 
     jsonVacc = json.loads(schema.vaccines)
+    tmpListVacc: list[models.Vaccine] = []
     for j in jsonVacc:
         j["date"] = datetime.fromisoformat(j["date"])
         db_vaccine = models.Vaccine(
             **j,
-            puppy=db_puppy.id,
         )
-        db.add(db_vaccine)
+        tmpListVacc.append(db_vaccine)
 
-    create_container(container)
-
+    tmpImgs: list[models.Media] = []
     for image in images["images"]:
-        media = _upload_media(image, db_puppy.id, container)
-        db.add(media)
+        db_media: models.Media = _upload_media(image, puppy_uuid)
+        tmpImgs.append(db_media)
+
+    # 1st important
+    db.add(db_puppy)
+    db.commit()
+    db.refresh(db_puppy)
+
+    # 2nd important
+    for m in tmpImgs:
+        m.puppy = db_puppy.id
+        db.add(m)
+        db.commit()
+
+    # 3rd and so on... importance
+    for m in tmpListVerm:
+        m.puppy = db_puppy.id
+        db.add(m)
+    for m in tmpListVacc:
+        m.puppy = db_puppy.id
+        db.add(m)
 
     db.commit()
 
     return db_puppy
 
 
-def _upload_media(img: UploadFile, puppy: int, container: str) -> models.Media:
-    blob_id = uuid.uuid4().hex
-    blob = create_blob(blob_id, container, img.content_type)
+def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
+    media_uuid = uuid.uuid4().hex
 
-    upload_blob(blob, img.file, img.content_type)
+    upload_img(puppy_uuid, media_uuid, img)
+
     model = models.Media(
-        url=blob.primary_endpoint,
-        puppy=puppy,
-        blob=blob_id,
+        uuid=media_uuid,
     )
     return model
 
 
 def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
-    model = (
+    puppy = (
         db.query(models.PuppyModel)
         .options(
             joinedload(models.PuppyModel.vaccines),
@@ -102,7 +113,7 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
         .first()
     )
 
-    if not model:
+    if not puppy:
         raise exceptions.PuppyDetailsException(
             status_code=status.HTTP_404_NOT_FOUND,
             message="Nenhum filhote encontrado.",
@@ -111,7 +122,7 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
     breed = (
         db.query(models.BreedModel)
         .filter(
-            models.BreedModel.id == model.breed,
+            models.BreedModel.id == puppy.breed,
         )
         .first()
     )
@@ -119,15 +130,17 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
     images = (
         db.query(models.Media)
         .filter(
-            models.Media.puppy == model.id,
+            models.Media.puppy == puppy.id,
         )
         .all()
     )
 
-    d = model.__dict__
+    d = puppy.__dict__
 
     d["breed"] = breed.name
-    d["images"] = [i.url for i in images]
+
+    d["images"] = [get_url_by_key(puppy.uuid, i.uuid) for i in images]
+
     return d
 
 
@@ -148,3 +161,24 @@ def list_puppies(
     return (
         db.query(models.PuppyModel).filter(models.PuppyModel.id.in_(puppies_ids)).all()
     )
+
+
+def show_on_gallery(
+    db: Session,
+    puppy_id: int,
+) -> int:
+    puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
+    puppy.reviewed = True
+    puppy.public_access = True
+    db.commit()
+    return puppy_id
+
+def hide_from_gallery(
+    db: Session,
+    puppy_id: int,
+) -> int:
+    puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
+    puppy.reviewed = False
+    puppy.public_access = False
+    db.commit()
+    return puppy_id

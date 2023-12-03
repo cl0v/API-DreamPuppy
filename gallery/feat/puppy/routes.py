@@ -47,3 +47,27 @@ async def add_breed(breed: schemas.NewBreed, db: Session = Depends(get_db)):
 )
 def list_breeds(db: Session = Depends(get_db)):
     return crud.list_breeds(db)
+
+
+@router.put(
+    "/puppies/{puppy_id}/show",
+    dependencies=[Depends(ignore_non_admins)],
+)
+def show_on_gallery(
+    puppy_id: int,
+    db: Session = Depends(get_db),
+):
+    pid = crud.show_on_gallery(db, puppy_id)
+    return {"id": pid, "message": "OK"}
+
+
+@router.put(
+    "/puppies/{puppy_id}/hide",
+    dependencies=[Depends(ignore_non_admins)],
+)
+def hide_from_gallery(
+    puppy_id: int,
+    db: Session = Depends(get_db),
+):
+    pid = crud.hide_from_gallery(db, puppy_id)
+    return {"id": pid, "message": "OK"}

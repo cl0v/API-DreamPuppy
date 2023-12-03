@@ -27,7 +27,7 @@ async def get_kennel(kennel_id: int, db: Session = Depends(get_db)):
 # App Kennel
 @router.post(
     "/kennels/{kennel_id}/puppies/new",
-    response_model=int,
+    response_model=schemas.OutputAddPuppy,
     dependencies=[Depends(ignore_non_admins)],
 )
 def add_puppy(
@@ -40,7 +40,7 @@ def add_puppy(
 
     crud.relate_to_kennel_n_puppies(db, kennel_id=kennel_id, puppy_id=n_puppy.id)
 
-    return n_puppy.id
+    return {"id": n_puppy.id, "message": "OK"}
 
 
 @router.get(

@@ -21,6 +21,7 @@ class PuppyRequestForm:
         vaccines: Annotated[str | None, Form()],
     ):
         self.breed = breed
+        self.pedigiree = pedigree
         self.microchip = microchip
         self.minimum_age_departure_in_days = minimum_age_departure_in_days
         self.price = price

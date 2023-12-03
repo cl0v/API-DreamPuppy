@@ -26,7 +26,7 @@ import gallery.schemas.user as user_schema
 import gallery.cruds.user as user_crud
 from gallery.cruds.user import validate_user_exists
 
-from gallery.main import app
+from main import app
 
 @app.post("/auth/register", response_model=Token)
 async def register_for_credentials(
