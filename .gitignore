@@ -4,6 +4,6 @@ gallery/env.py
 scripts/
 notes.md
 imgmk.jpeg
-example.py
 imgs/
 .pytest_cache/
+examples/
