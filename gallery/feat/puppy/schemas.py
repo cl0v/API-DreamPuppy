@@ -68,18 +68,3 @@ class OutPuppy(BaseModel):
 class OutputPuppyWithBreedStr(OutPuppy):
     breed: str
     images: list[str]
-
-
-# Primeiro adicionar o filhote.
-# Depois adicionar fotos.
-# 2 ENDPOINTS
-
-from sqlalchemy.sql import func
-
-add_puppy_json = {
-    # (id) Lulu da Pomerânia
-    "breed": 1,
-    "microchip": True,
-    "vermifuges": [{"brand": "ENDAL® PLUS - MSD", "date": func.now()}],
-    "vaccines": [{"brand": "Bio Max", "type": "V8", "date": func.now()}],
-}
