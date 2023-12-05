@@ -59,16 +59,41 @@ def test_err_fields_add_puppy():
     assert r.is_client_error
 
 
-def test_add_puppy():
-    pytest.skip("Parou de funcionar por algum motivo")
+def test_add_n_read_puppy():
     r = main.client.post(
         "/kennels/4/puppies/new",
         headers=main.admin_auth_header,
-        content=json.dumps(add_puppy_json),
+        data=add_puppy_json,
         files=puppy_images,
     )
     assert r.status_code == 200
-    assert r.json() > 0 
+    d = r.json()
+    assert "id" in d.keys()
+    pid = d["id"]
+    assert pid > 0
+
+    r2 = main.client.get(f"/puppies/{pid}")
+    d2 = r2.json()
+    assert r2.status_code == 200
+
+    assert isinstance(add_puppy_json["breed"], int)
+    assert isinstance(d2["breed"], str)
+    d2.pop("breed")
+
+    assert "images" in d2.keys()
+    assert isinstance(d2["images"], list)
+    assert len(d2["images"]) == 1
+    assert d2["id"] == pid
+
+    for k in d2.keys():
+        if k not in add_puppy_json.keys():
+            continue
+        try:
+            inval = json.loads(add_puppy_json[k])
+        except:
+            inval = add_puppy_json[k]
+        outval = d2[k]
+        assert inval == outval
 
 
 add_breed_data = {"name": "test_{0}".format(utils.random_string_gen())}
@@ -86,7 +111,7 @@ add_puppy_json = {
     "breed": 4,
     "price": 970,
     "gender": -1,
-    "pedigree": False,
+    "pedigree": True,
     "birth": "2023-11-02T18:25:43.511000",
     "microchip": True,
     "minimum_age_departure_in_days": 60,
@@ -109,10 +134,7 @@ add_puppy_json = {
     ),
 }
 
-
-l = [f for f in os.listdir("./imgs")]
+# l = [f for f in os.listdir("./imgs")]
 puppy_images = {
-    "images": l[0],
-    "images": l[1],
-    "images": l[2],
+    "images": open("imgs/0.jpg", "rb"),
 }

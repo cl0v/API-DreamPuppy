@@ -36,6 +36,7 @@ def add_puppy(
     db_puppy = models.PuppyModel(
         uuid=puppy_uuid,
         breed=schema.breed,
+        pedigree=schema.pedigiree,
         microchip=schema.microchip,
         price=schema.price,
         birth=schema.birth,
