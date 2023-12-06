@@ -5,8 +5,8 @@ from fastapi import status, UploadFile
 import json
 from datetime import datetime
 import uuid
-from gallery.feat.puppy.s3_storage import upload_img, get_url_by_key
-from gallery.feat.kennel.models import KennelsNPuppies
+from app.feat.puppy.s3_storage import upload_img, get_url_by_key
+from app.feat.kennel.models import KennelsNPuppies
 
 
 def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:

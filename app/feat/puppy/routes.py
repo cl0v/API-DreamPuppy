@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from gallery.database import get_db
+from app.database import get_db
 from . import schemas, crud
-from gallery.security import ignore_non_admins
+from app.security import ignore_non_admins
 
 router = APIRouter()
 

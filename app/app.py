@@ -1,13 +1,13 @@
-from gallery.database import engine, Base
+from app.database import engine, Base
 from fastapi.responses import JSONResponse
 from fastapi import Request, FastAPI
 
-from gallery.feat.gallery.routes import router as gallery_router
-from gallery.feat.puppy.routes import router as puppy_router
-from gallery.feat.kennel.routes import router as kennel_router
-from gallery.feat.gallery.exceptions import GalleryException
-from gallery.feat.puppy.exceptions import PuppyDetailsException, PuppyStorageException
-from gallery.feat.kennel.exceptions import KennelException
+from app.feat.gallery.routes import router as gallery_router
+from app.feat.puppy.routes import router as puppy_router
+from app.feat.kennel.routes import router as kennel_router
+from app.feat.gallery.exceptions import GalleryException
+from app.feat.puppy.exceptions import PuppyDetailsException, PuppyStorageException
+from app.feat.kennel.exceptions import KennelException
 
 Base.metadata.create_all(bind=engine)
 

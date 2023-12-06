@@ -8,7 +8,6 @@ bucket = "viana.dev2.gallery"
 
 
 def get_url_by_key(puppy_uuid: str, media_uuid: str):
-    # key = "{0}/{1}".format(puppy_uuid, media_uuid)
     key = "{0}/{1}".format(puppy_uuid, media_uuid)
     url = client.generate_presigned_url(
         ClientMethod="get_object",

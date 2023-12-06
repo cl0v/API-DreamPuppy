@@ -8,8 +8,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
 
-from gallery.database import get_db, engine, Base
-from gallery.security import (
+from app.database import get_db, engine, Base
+from app.security import (
     Token,
     oauth2_scheme,
     validate_jwt,
@@ -22,11 +22,11 @@ from gallery.security import (
 
 
 # import gallery.models.user as user_model
-import gallery.schemas.user as user_schema
-import gallery.cruds.user as user_crud
-from gallery.cruds.user import validate_user_exists
+import app.schemas.user as user_schema
+import app.cruds.user as user_crud
+from app.cruds.user import validate_user_exists
 
-from gallery.main import app
+from app.main import app
 
 @app.post("/auth/register", response_model=Token)
 async def register_for_credentials(

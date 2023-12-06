@@ -1,6 +1,6 @@
 import uvicorn
 
-from gallery.app import app
+from app.app import app
 
 # app.include_router(
 #     admin.router,

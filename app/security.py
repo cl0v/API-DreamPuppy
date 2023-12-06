@@ -9,9 +9,9 @@ from jose.exceptions import ExpiredSignatureError
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from gallery.database import get_db
-from gallery.models import user
-from gallery.env import SECRET_KEY, ADMIN_JWT
+from app.database import get_db
+from app.models import user
+from app.env import SECRET_KEY, ADMIN_JWT
 
 
 ALGORITHM = "HS256"

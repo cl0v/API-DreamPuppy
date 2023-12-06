@@ -1,6 +1,6 @@
 from .schemas import GallerySchema
-from gallery.feat.gallery import crud
-from gallery.database import get_db
+from app.feat.gallery import crud
+from app.database import get_db
 from fastapi import APIRouter, Depends
 
 router = APIRouter()

@@ -3,7 +3,7 @@ from . import utils
 import json
 import pytest
 import os
-from gallery.feat.puppy import schemas
+from app.feat.puppy import schemas
 
 
 def test_add_breed():

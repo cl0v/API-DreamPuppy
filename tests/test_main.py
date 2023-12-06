@@ -1,5 +1,5 @@
 from starlette.testclient import TestClient
-from gallery.app import app
+from app.app import app
 
 
 client = TestClient(app)

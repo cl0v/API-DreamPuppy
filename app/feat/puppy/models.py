@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
-from gallery.database import Base
+from app.database import Base
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
