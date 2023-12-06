@@ -1,6 +1,6 @@
 import uvicorn
 
-from app.app import app
+from app.main import app
 
 # app.include_router(
 #     admin.router,
