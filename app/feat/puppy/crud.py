@@ -5,7 +5,7 @@ from fastapi import status, UploadFile
 import json
 from datetime import datetime
 import uuid
-from app.feat.puppy.s3_storage import upload_img, get_url_by_key
+from app.feat.puppy.azure_storage import upload_img, get_url_by_key, create_container
 from app.feat.kennel.models import KennelsNPuppies
 
 
@@ -62,6 +62,9 @@ def add_puppy(
         )
         tmpListVacc.append(db_vaccine)
 
+
+    # 1 unico container por iamgem
+    create_container(puppy_uuid)
     tmpImgs: list[models.Media] = []
     for image in images["images"]:
         db_media: models.Media = _upload_media(image, puppy_uuid)
@@ -94,6 +97,7 @@ def add_puppy(
 def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
     media_uuid = uuid.uuid4().hex
 
+    
     upload_img(puppy_uuid, media_uuid, img)
 
     model = models.Media(
@@ -173,6 +177,7 @@ def show_on_gallery(
     puppy.public_access = True
     db.commit()
     return puppy_id
+
 
 def hide_from_gallery(
     db: Session,

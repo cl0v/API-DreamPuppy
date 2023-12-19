@@ -2,7 +2,7 @@ from . import schemas, exceptions
 from fastapi import status
 from sqlalchemy.orm import Session
 from app.feat.puppy import models as puppy_models
-from app.feat.puppy.s3_storage import get_url_by_key
+from app.feat.puppy.azure_storage import get_url_by_key
 
 
 LIMIT_AMOUNT = 30

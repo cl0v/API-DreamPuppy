@@ -1,9 +1,11 @@
 # from datetime import datetime, timedelta
 from typing import Annotated, Tuple
+
 # from passlib.context import CryptContext
 # from pydantic import BaseModel
 from fastapi import Depends, HTTPException, status, Security
 from fastapi.security import OAuth2PasswordBearer
+
 # from jose import jwt
 # from jose.exceptions import ExpiredSignatureError
 # from sqlalchemy.orm import Session
@@ -11,14 +13,13 @@ from fastapi.security import OAuth2PasswordBearer
 
 # from app.database import get_db
 # from app.models import user
-from app.env import SECRET_KEY, ADMIN_JWT
-
+import os
 
 # ALGORITHM = "HS256"
 # ACCESS_TOKEN_EXPIRE_DAYS = 30
 
 
-admin_token = ADMIN_JWT
+admin_token = os.environ["ADMIN_JWT"]
 
 
 # pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
