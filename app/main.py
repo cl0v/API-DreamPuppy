@@ -18,6 +18,11 @@ app.include_router(puppy_router)
 app.include_router(kennel_router)
 
 
+@app.get("/")
+def root():
+    return "Hello World!"
+
+
 @app.exception_handler(GalleryException)
 async def gallery_exception_handler(request: Request, exc: GalleryException):
     return JSONResponse(
@@ -56,4 +61,3 @@ async def azure_exception_handler(request: Request, exc: PuppyStorageException):
             "msg": exc.message,
         },
     )
-
