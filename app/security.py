@@ -13,13 +13,14 @@ from fastapi.security import OAuth2PasswordBearer
 
 # from app.database import get_db
 # from app.models import user
-import os
+from app.env import ADMIN_JWT
+
 
 # ALGORITHM = "HS256"
 # ACCESS_TOKEN_EXPIRE_DAYS = 30
 
 
-admin_token = os.environ["ADMIN_JWT"]
+admin_token = ADMIN_JWT
 
 
 # pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

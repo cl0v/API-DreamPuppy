@@ -2,7 +2,6 @@ from . import test_main as main
 from . import utils
 import json
 import pytest
-import os
 from app.feat.puppy import schemas
 
 

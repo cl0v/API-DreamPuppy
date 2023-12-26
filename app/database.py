@@ -1,17 +1,20 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-
-SQLALCHEMY_DATABASE_URL = "sqlite:///./gallery.db"
-# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    # check_same_thread is needed only for SQLite. It's not needed for other databases.
-    connect_args={"check_same_thread": False},
+from app.env import (
+    POSTGRES_PASSWORD,
+    POSTGRES_USER,
+    POSTGRES_DATABASE_NAME,
+    POSTGRES_SERVER,
 )
+
+
+SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DATABASE_NAME}"
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+
 
 # Dependency
 def get_db():
@@ -20,4 +23,3 @@ def get_db():
         yield db
     finally:
         db.close()
-

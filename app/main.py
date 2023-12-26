@@ -8,7 +8,7 @@ from app.feat.kennel.routes import router as kennel_router
 from app.feat.gallery.exceptions import GalleryException
 from app.feat.puppy.exceptions import PuppyDetailsException, PuppyStorageException
 from app.feat.kennel.exceptions import KennelException
-import os
+from app.env import TEST_NAME
 
 Base.metadata.create_all(bind=engine)
 
@@ -21,7 +21,7 @@ app.include_router(kennel_router)
 
 @app.get("/")
 def root():
-    name = os.environ['TEST_NAME']
+    name = TEST_NAME
     return f"Hello {name}"
 
 

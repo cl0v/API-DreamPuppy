@@ -4,12 +4,10 @@ from azure.storage.blob import (
 )
 
 from fastapi import UploadFile
-import os
+from app.env import AZURE_STORAGE_CNN_STR
 from app.feat.puppy.exceptions import PuppyStorageException
 
-blob_service_client = BlobServiceClient.from_connection_string(
-    os.environ["AZURE_STORAGE_CNN_STR"]
-)
+blob_service_client = BlobServiceClient.from_connection_string(AZURE_STORAGE_CNN_STR)
 
 
 def get_url_by_key(puppy_uuid: str, media_uuid: str):
