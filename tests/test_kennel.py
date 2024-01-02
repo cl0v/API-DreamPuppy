@@ -28,6 +28,7 @@ def test_add_n_read_kennel():
 
     d = r.json()
     kid = d["id"]
+    print(f"id: {kid}")
 
     assert r.status_code == 200
     assert kid > 0

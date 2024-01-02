@@ -29,6 +29,7 @@ def get_kennel(db: Session, kennel_id: int) -> models.KennelModel:
             message="Canil não encontrado.",
         )
 
+    print(model)
     return model
 
 

@@ -1,0 +1,62 @@
+services:
+  app:
+    build: .
+    image: gallery-api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 80
+    ports:
+      - 3000:80
+    working_dir: /app
+    restart: always
+    depends_on:
+      - db
+    environment:
+      AZURE_STORAGE_NAME: 01vianadev
+      AZURE_STORAGE_KEY: zb8fp+QwJQk7xpMPFfct2KCgfgtCOP7o8YAU5UndwNBz3SlxrGkK/nUKoqRtlpJF1RP1PsCXE7U6+ASteokxpQ==
+      AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
+      TEST_NAME: CELIN
+      ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
+      POSTGRES_USER: viana
+      POSTGRES_PASSWORD: fa738ce94be6106044d5dcb0b799deef23228c4bbf278d83196c4aacb4e2db9e
+      POSTGRES_DATABASE_NAME: db
+      POSTGRES_SERVER: postgresserver:5352
+    networks:
+      - practice
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /app/app
+          ignore:
+            - __pycache__/
+        - action: rebuild
+          path: package.json
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - gallery-postgres-data:/var/lib/posgres
+    ports:
+      - 5352
+    environment:
+      POSTGRES_PASSWORD: fa738ce94be6106044d5dcb0b799deef23228c4bbf278d83196c4aacb4e2db9e
+      POSTGRES_USER: viana
+    networks:
+        - practice
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+#   mysql:
+#     image: mysql:8.0
+#     volumes:
+#       - todo-mysql-data:/var/lib/mysql
+#     environment:
+#       MYSQL_ROOT_PASSWORD: secret
+#       MYSQL_DATABASE: todos
+
+volumes:
+  gallery-postgres-data:
+  
+networks:
+  practice:

@@ -4,7 +4,6 @@ import json
 import pytest
 from app.feat.puppy import schemas
 
-
 def test_add_breed():
     r = main.client.post(
         "/breeds/new",
