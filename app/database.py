@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+import sqlalchemy as sa
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.env import (
     POSTGRES_PASSWORD,
@@ -7,10 +7,15 @@ from app.env import (
     POSTGRES_SERVER,
 )
 
+SQLALCHEMY_DATABASE_URL = sa.engine.URL.create(
+    drivername="postgresql",
+    username=POSTGRES_USER,
+    password=POSTGRES_PASSWORD,
+    host=POSTGRES_SERVER,
+    database=POSTGRES_DATABASE_NAME,
+)
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DATABASE_NAME}"
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = sa.create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
