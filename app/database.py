@@ -5,14 +5,16 @@ from app.env import (
     POSTGRES_USER,
     POSTGRES_DATABASE_NAME,
     POSTGRES_SERVER,
+    POSTGRES_PORT,
 )
 
 SQLALCHEMY_DATABASE_URL = sa.engine.URL.create(
     drivername="postgresql",
+    database=POSTGRES_DATABASE_NAME,
     username=POSTGRES_USER,
     password=POSTGRES_PASSWORD,
     host=POSTGRES_SERVER,
-    database=POSTGRES_DATABASE_NAME,
+    port=POSTGRES_PORT,
 )
 
 engine = sa.create_engine(SQLALCHEMY_DATABASE_URL)
