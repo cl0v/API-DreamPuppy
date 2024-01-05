@@ -8,8 +8,6 @@ from psycopg2.errors import UniqueViolation
 def add_kennel(db: Session, kennel: schemas.CreateKennel) -> models.KennelModel:
     model = models.KennelModel(**kennel.model_dump())
     
-    # Primeiro devo checar se os valores primary key ja foram usados, retornar erro antes de tentar adicionar.
-    
     duplicatePhone = (
         db.query(models.KennelModel).filter(models.KennelModel.phone == kennel.phone).first()
     )
@@ -20,12 +18,12 @@ def add_kennel(db: Session, kennel: schemas.CreateKennel) -> models.KennelModel:
     if duplicatePhone:
          raise exceptions.KennelException(
                 status_code=status.HTTP_409_CONFLICT,
-                message="Telefone já cadastrado, tente outro.",
+                message="Esse telefone já foi cadastrado, tente outro.",
             )
     if duplicateInstagram:
          raise exceptions.KennelException(
                 status_code=status.HTTP_409_CONFLICT,
-                message="Instagram já cadastrado, tente outro.",
+                message="Esse instagram já foi cadastrado, tente outro.",
             )
     
     try:
@@ -39,7 +37,7 @@ def add_kennel(db: Session, kennel: schemas.CreateKennel) -> models.KennelModel:
         # duplicate_param_name = err.args[0].split("kennels.")[1]
             raise exceptions.KennelException(
                 status_code=status.HTTP_409_CONFLICT,
-                message="Canil já está cadastrado, tente outro.",
+                message="Esse canil já está cadastrado, tente outro.",
             )
     return model
 
@@ -51,10 +49,9 @@ def get_kennel(db: Session, kennel_id: int) -> models.KennelModel:
     if not model:
         raise exceptions.KennelException(
             status_code=status.HTTP_404_NOT_FOUND,
-            message="Canil não encontrado.",
+            message="Canil não existe.",
         )
 
-    print(model)
     return model
 
 

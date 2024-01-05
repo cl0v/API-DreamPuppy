@@ -7,8 +7,7 @@ from fastapi import status
 from app.feat.puppy import crud as puppy_crud
 from app.feat.puppy.schemas import (
     PuppyRequestForm,
-    OutPuppy,
-    OutputPuppyWithBreedStr,
+    OutPuppy
 )
 from typing import Annotated
 
@@ -52,6 +51,8 @@ def list_puppies_from_kennel(
     kennel_id: int,
     db: Session = Depends(get_db),
 ):
+    # print('INIT')
+    # print('END')
     ids = crud.list_my_puppies_ids(db, kennel_id)
     tmp = puppy_crud.list_puppies(db, ids)
     return tmp
