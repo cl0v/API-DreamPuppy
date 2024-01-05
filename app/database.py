@@ -12,7 +12,6 @@ from app.env import POSTGRES_URL
 #     port=POSTGRES_PORT,
 # )
 
-print(POSTGRES_URL)
 
 engine = sa.create_engine(POSTGRES_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
