@@ -10,12 +10,12 @@ services:
     depends_on:
       - postgres
     environment:
+      TEST_NAME: Version01
       POSTGRES_URL: postgresql://postgres:example@postgres:5432/database
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
-      AZURE_STORAGE_KEY: zb8fp+QwJQk7xpMPFfct2KCgfgtCOP7o8YAU5UndwNBz3SlxrGkK/nUKoqRtlpJF1RP1PsCXE7U6+ASteokxpQ==
-      AZURE_STORAGE_NAME: 01vianadev
       AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
-      TEST_NAME: CELIN
+      # AZURE_STORAGE_KEY: zb8fp+QwJQk7xpMPFfct2KCgfgtCOP7o8YAU5UndwNBz3SlxrGkK/nUKoqRtlpJF1RP1PsCXE7U6+ASteokxpQ==
+      # AZURE_STORAGE_NAME: 01vianadev
     networks:
       - practice
     develop:
@@ -52,6 +52,8 @@ services:
     restart: always
     ports:
       - 8080:8080
+    networks:
+      - practice
 
 volumes:
   03-gallery-postgres-data:
