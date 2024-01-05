@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends
 router = APIRouter()
 
 
-@router.get("/gallery/", response_model=list[GallerySchema])
+@router.get("/gallery", response_model=list[GallerySchema])
 def fill_gallery(amount: int = 9, db=Depends(get_db)):
     return crud.fill_gallery(db, amount)
 
