@@ -2,20 +2,45 @@ from sqlalchemy.orm import Session
 from . import schemas, models, exceptions
 from sqlalchemy.exc import IntegrityError
 from fastapi import status
+from psycopg2.errors import UniqueViolation
 
 
 def add_kennel(db: Session, kennel: schemas.CreateKennel) -> models.KennelModel:
     model = models.KennelModel(**kennel.model_dump())
+    
+    # Primeiro devo checar se os valores primary key ja foram usados, retornar erro antes de tentar adicionar.
+    
+    duplicatePhone = (
+        db.query(models.KennelModel).filter(models.KennelModel.phone == kennel.phone).first()
+    )
+    duplicateInstagram = (
+        db.query(models.KennelModel).filter(models.KennelModel.instagram == kennel.instagram).first()
+    )
+    
+    if duplicatePhone:
+         raise exceptions.KennelException(
+                status_code=status.HTTP_409_CONFLICT,
+                message="Telefone já cadastrado, tente outro.",
+            )
+    if duplicateInstagram:
+         raise exceptions.KennelException(
+                status_code=status.HTTP_409_CONFLICT,
+                message="Instagram já cadastrado, tente outro.",
+            )
+    
     try:
         db.add(model)
         db.commit()
         db.refresh(model)
     except IntegrityError as err:
-        duplicate_param_name = err.args[0].split("kennels.")[1]
-        raise exceptions.KennelException(
-            status_code=status.HTTP_409_CONFLICT,
-            message=f"O {duplicate_param_name} já está cadastrado, tente outro.",
-        )
+        print(err.orig)
+        if(type(err.orig) is UniqueViolation):
+            
+        # duplicate_param_name = err.args[0].split("kennels.")[1]
+            raise exceptions.KennelException(
+                status_code=status.HTTP_409_CONFLICT,
+                message="Canil já está cadastrado, tente outro.",
+            )
     return model
 
 
