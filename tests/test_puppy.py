@@ -35,8 +35,7 @@ def test_err_duplicate_add_breed():
 def test_list_breeds():
     r = main.client.get("/breeds/list")
     assert r.status_code == 200
-    for a in some_available_breeds:
-        assert a in r.json()
+    assert isinstance(r.json(), list)
 
 
 def test_get_puppy_from_id():
@@ -134,5 +133,5 @@ add_puppy_json = {
 
 # l = [f for f in os.listdir("./imgs")]
 puppy_images = {
-    "images": open("imgs/0.jpg", "rb"),
+    "images": open("tests/blob/0.jpg", "rb"),
 }

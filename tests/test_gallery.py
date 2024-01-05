@@ -3,7 +3,6 @@ import pytest
 
 
 def test_fill_gallery():
-    pytest.skip()
     response = main.client.get("/gallery")
     assert response.status_code == 200
     assert isinstance(response.json(), list)
