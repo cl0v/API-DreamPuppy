@@ -8,18 +8,14 @@ services:
     working_dir: /app
     restart: always
     depends_on:
-      - db
+      - postgres
     environment:
+      POSTGRES_URL: postgresql://postgres:example@postgres:5432/database
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
       AZURE_STORAGE_KEY: zb8fp+QwJQk7xpMPFfct2KCgfgtCOP7o8YAU5UndwNBz3SlxrGkK/nUKoqRtlpJF1RP1PsCXE7U6+ASteokxpQ==
       AZURE_STORAGE_NAME: 01vianadev
       AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
       TEST_NAME: CELIN
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: fa738ce94be6106044d5dcb0b799deef23228c4bbf278d83196c4aacb4e2db9e
-      POSTGRES_DATABASE_NAME: api
-      POSTGRES_PORT: 5555
-      POSTGRES_SERVER: 0.0.0.0
     networks:
       - practice
     develop:
@@ -32,7 +28,7 @@ services:
         - action: rebuild
           path: package.json
 
-  db:
+  postgres:
     image: postgres
     restart: always
     volumes:
@@ -47,7 +43,7 @@ services:
       POSTGRES_PASSWORD: example
       # POSTGRES_PASSWORD: fa738ce94be6106044d5dcb0b799deef23228c4bbf278d83196c4aacb4e2db9e
       POSTGRES_USER: postgres
-      POSTGRES_DB: api
+      POSTGRES_DB: database
     networks:
         - practice
 
