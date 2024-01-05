@@ -44,7 +44,7 @@ def add_puppy(
 
 
 @router.get(
-    "/kennels/{kennel_id}/puppies/",
+    "/kennels/{kennel_id}/puppies",
     response_model=list[OutPuppy],
     dependencies=[Depends(ignore_non_admins)],
 )
