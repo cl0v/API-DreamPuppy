@@ -32,7 +32,11 @@ def fill_gallery(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
             puppy_models.PuppyModel.reviewed == REVIEWED_DEFAULT,
             puppy_models.PuppyModel.public_access == VISIBLE_DEFAULT,
         )
-        .group_by(puppy_models.Media.puppy)
+        .group_by(
+            puppy_models.Media.puppy,
+            puppy_models.Media.uuid,
+            puppy_models.PuppyModel.uuid,
+        )
         .limit(amount)
         .all()
     )

@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends, File, Form, UploadFile
+from fastapi import APIRouter, Depends, File, UploadFile
 from sqlalchemy.orm import Session
 from app.database import get_db
-from . import schemas, crud, exceptions
+from . import schemas, crud
 from app.security import ignore_non_admins
-from fastapi import status
 from app.feat.puppy import crud as puppy_crud
 from app.feat.puppy.schemas import (
     PuppyRequestForm,

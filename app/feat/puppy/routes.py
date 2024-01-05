@@ -24,7 +24,7 @@ def get_puppy(
     "/puppies/{puppy_id}/kennel",
     response_model=int,
 )
-def get_puppy(
+def get_kennel_id_from_puppy_id(
     puppy_id: int,
     db: Session = Depends(get_db),
 ):
@@ -53,7 +53,7 @@ def list_breeds(db: Session = Depends(get_db)):
     "/puppies/{puppy_id}/show",
     dependencies=[Depends(ignore_non_admins)],
 )
-def show_on_gallery(
+def show_puppy_on_gallery(
     puppy_id: int,
     db: Session = Depends(get_db),
 ):
@@ -65,7 +65,7 @@ def show_on_gallery(
     "/puppies/{puppy_id}/hide",
     dependencies=[Depends(ignore_non_admins)],
 )
-def hide_from_gallery(
+def hide_puppy_from_gallery(
     puppy_id: int,
     db: Session = Depends(get_db),
 ):

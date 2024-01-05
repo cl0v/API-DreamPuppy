@@ -7,8 +7,8 @@ from fastapi import UploadFile
 from app.env import AZURE_STORAGE_CNN_STR, AZURE_STORAGE_NAME, AZURE_STORAGE_KEY
 from app.feat.puppy.exceptions import PuppyStorageException
 
-# blob_service_client = BlobServiceClient.from_connection_string(conn_str=AZURE_STORAGE_CNN_STR)
-blob_service_client = BlobServiceClient(account_url=f"https://{AZURE_STORAGE_NAME}.blob.core.windows.net", credential=AZURE_STORAGE_KEY)
+blob_service_client = BlobServiceClient.from_connection_string(conn_str=AZURE_STORAGE_CNN_STR)
+# blob_service_client = BlobServiceClient(account_url=f"https://{AZURE_STORAGE_NAME}.blob.core.windows.net", credential=AZURE_STORAGE_KEY)
 
 
 def get_url_by_key(puppy_uuid: str, media_uuid: str):

@@ -1,9 +1,9 @@
 # from datetime import datetime, timedelta
-from typing import Annotated, Tuple
+from typing import Annotated
 
 # from passlib.context import CryptContext
 # from pydantic import BaseModel
-from fastapi import Depends, HTTPException, status, Security
+from fastapi import HTTPException, status, Security
 from fastapi.security import OAuth2PasswordBearer
 
 # from jose import jwt
