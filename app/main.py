@@ -10,6 +10,7 @@ from app.feat.puppy.exceptions import PuppyDetailsException, PuppyStorageExcepti
 from app.feat.kennel.exceptions import KennelException
 from app.env import TEST_NAME
 
+
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(debug=True)
@@ -22,7 +23,7 @@ app.include_router(kennel_router)
 @app.get("/")
 def root():
     name = TEST_NAME
-    return f"Hello {name}"
+    return f"Hello {name} ."
 
 
 @app.exception_handler(GalleryException)

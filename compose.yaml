@@ -1,8 +1,7 @@
 services:
   app:
     build: .
-    image: gallery-api
-    # command: uvicorn app.main:app --host 0.0.0.0 --port 80
+    image: gallery-api:latest
     ports:
       - 3000:80
     working_dir: /app
@@ -10,12 +9,11 @@ services:
     depends_on:
       - postgres
     environment:
-      TEST_NAME: Version01
-      POSTGRES_URL: postgresql://postgres:example@postgres:5432/database
+      TEST_NAME: Version02
+      POSTGRES_URL: postgresql+psycopg2://postgres:example@postgres:5432/database
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
       AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
-      # AZURE_STORAGE_KEY: zb8fp+QwJQk7xpMPFfct2KCgfgtCOP7o8YAU5UndwNBz3SlxrGkK/nUKoqRtlpJF1RP1PsCXE7U6+ASteokxpQ==
-      # AZURE_STORAGE_NAME: 01vianadev
+      cloudflare-images-token: aca-0JGeQfgqcseF1zDc5YSVf63Mp0Xs2cOtLv-J
     networks:
       - practice
     develop:
