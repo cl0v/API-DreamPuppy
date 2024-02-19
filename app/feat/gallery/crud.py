@@ -2,7 +2,7 @@ from . import schemas, exceptions
 from fastapi import status
 from sqlalchemy.orm import Session
 from app.feat.puppy import models as puppy_models
-from app.feat.puppy.azure_storage import get_url_by_key
+# from app.feat.puppy.azure_storage import get_url_by_key
 
 
 LIMIT_AMOUNT = 30
@@ -43,7 +43,7 @@ def fill_gallery(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
     result = [
         {
             "id": id,
-            "url": get_url_by_key(puppy_uuid, media_uuid),
+            "url": "#get_url_by_key(puppy_uuid, media_uuid)",
         }
         for id, media_uuid, puppy_uuid in q
     ]

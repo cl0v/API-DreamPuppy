@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    image: gallery-api:alp-0.0.5
+    image: vianagallery/gallery-api:develop
     ports:
       - 8080:8080
     working_dir: /app
@@ -9,11 +9,12 @@ services:
     depends_on:
       - postgres
     environment:
-      TEST_NAME: Version02
+      TEST_NAME: Version-3.1
       POSTGRES_URL: postgresql+psycopg2://postgres:example@postgres:5432/database
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
-      AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
-      cloudflare-images-token: aca-0JGeQfgqcseF1zDc5YSVf63Mp0Xs2cOtLv-J
+      # AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
+      CFI_ID: 396a1fd05689c45f07bdd191705e98dd
+      CFI_TOKEN: aca-0JGeQfgqcseF1zDc5YSVf63Mp0Xs2cOtLv-J
     networks:
       - practice
     develop:
