@@ -1,4 +1,8 @@
+tag = alp-0.0.5
+
 build:
-	docker build --platform linux/amd64 -t vianagallery/gallery-api:alp-0.0.4 .
+	docker build -t vianagallery/gallery-api:${tag} .
 push:
-	docker push vianagallery/gallery-api:alp-0.0.4
+	docker push vianagallery/gallery-api:${tag}
+inspect:
+	docker image inspect vianagallery/gallery-api:${tag}
