@@ -6,3 +6,7 @@ push:
 	docker push vianagallery/gallery-api:${tag}
 inspect:
 	docker image inspect vianagallery/gallery-api:${tag}
+run:
+	docker container run vianagallery/gallery-api:${tag}
+compose:
+	docker compose up
