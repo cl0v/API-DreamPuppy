@@ -1,4 +1,4 @@
-tag = alp-0.0.5
+tag = stable
 
 build:
 	docker build -t vianagallery/gallery-api:${tag} .
