@@ -5,8 +5,8 @@ services:
     image: api
     build:
       context: .
-      dockerfile: ./dev.Dockerfile
-    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8001"]
+      dockerfile: ./Dockerfile.debug
+    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8080"]
     ports:
       - 8080:8080
       - 5678:5678
@@ -28,6 +28,11 @@ services:
             - __pycache__/
         - action: rebuild
           path: package.json
+
+
+  ###         ####        ###
+  # Containers adicionais para funcionamento do sistema.
+  ###         ####        ###
 
   postgres:
     image: postgres

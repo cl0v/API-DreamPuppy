@@ -3,33 +3,35 @@ from app.env import cloudflare_account_id, cloudflare_token
 from fastapi import UploadFile
 
 
-url = "https://jsonplaceholder.typicode.com/posts/1"
-upload_url = (
-    f"https://api.cloudflare.com/client/v4/accounts/${cloudflare_account_id}/images/v1"
-)
-list_url = (
-    f"https://api.cloudflare.com/client/v4/accounts/${cloudflare_account_id}/images/v2"
-)
+def upload_image(image: UploadFile, puppy_uuid: str) -> str:
+    upload_url = f"https://api.cloudflare.com/client/v4/accounts/{cloudflare_account_id}/images/v1"
+    # TODO: Mudar o nome para que seja condizente com o id do filhote
+    image.filename = puppy_uuid
 
-
-def upload_image(image: UploadFile, puppy_uuid: str):
-    private_img = False
     response = (
         requests.post(
             upload_url,
             files={
-                # "metadata": {"puppy_id": puppy_uuid},
-                "requireSignedURLs": private_img,
+                # 'metadata': {"puppy_id": puppy_uuid},
                 "file": image.file,
             },
             headers={
-                "Authorization": f"Bearer ${cloudflare_token}",
-                "Content-Type": "application/json",
+                "Authorization": f"Bearer {cloudflare_token}",
             },
         ),
     )
-    # response_json = response.json()
-    print(response)
+
+    img_id = response[0].json()["result"]["id"]
+    return img_id
 
 
-response = requests.get(url)
+def get_image_public_url(image_id: str) -> str:
+    get_url = f"https://api.cloudflare.com/client/v4/accounts/{cloudflare_account_id}/images/v1/{image_id}"
+    response = requests.get(
+        get_url,
+        headers={
+            "Authorization": f"Bearer {cloudflare_token}",
+        },
+    )
+    img_url = response.json()["result"]["variants"][0]
+    return img_url

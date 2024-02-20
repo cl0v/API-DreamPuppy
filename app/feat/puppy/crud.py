@@ -1,13 +1,14 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
-from . import schemas, models, exceptions
+from app.feat.puppy import schemas, models, exceptions
 from fastapi import status, UploadFile
 import json
 from datetime import datetime
 import uuid
-# from app.feat.puppy.azure_storage import  get_url_by_key, create_container
-from app.feat.puppy.image_storage import upload_image
+from app.feat.puppy.image_storage import upload_image, get_image_public_url
 from app.feat.kennel.models import KennelsNPuppies
+
+# from app.feat.puppy.azure_storage import  get_url_by_key, create_container
 
 
 def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
@@ -95,11 +96,9 @@ def add_puppy(
 
 
 def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
-    media_uuid = uuid.uuid4().hex
-
-    upload_image(img, puppy_uuid)
-
-    model = models.Media(uuid=media_uuid)
+    # O upload_image precisa retornar o id para que seja salvo.
+    img_id = upload_image(img, puppy_uuid)
+    model = models.Media(uuid=img_id)
     return model
 
 
@@ -141,7 +140,7 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
 
     d["breed"] = breed.name
 
-    # d["images"] = [get_url_by_key(puppy.uuid, i.uuid) for i in images]
+    d["images"] = [get_image_public_url(i.uuid) for i in images]
 
     return d
 
