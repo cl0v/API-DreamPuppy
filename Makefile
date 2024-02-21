@@ -12,7 +12,7 @@ run:
 compose:
 	docker compose up
 stable:
-	docker build -t vianagallery/gallery-api:${tag} .
+	docker build --platform=linux/amd64 -t vianagallery/gallery-api:${tag} .
 	docker push vianagallery/gallery-api:${tag}
-	docker build -t vianagallery/gallery-api:stable .
+	docker build --platform=linux/amd64 -t vianagallery/gallery-api:stable .
 	docker push vianagallery/gallery-api:stable
