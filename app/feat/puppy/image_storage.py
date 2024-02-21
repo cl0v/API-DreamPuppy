@@ -16,7 +16,7 @@ def upload_image(image: UploadFile, puppy_uuid: str) -> str:
             upload_url,
             files={
                 # 'metadata': {"puppy_id": puppy_uuid},
-                "file": image.file,
+                "file": image.file
             },
             headers={
                 "Authorization": f"Bearer {cloudflare_token}",

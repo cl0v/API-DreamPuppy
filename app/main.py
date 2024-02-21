@@ -13,7 +13,7 @@ from app.env import TEST_NAME
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(debug=True)
+app = FastAPI(debug=False)
 
 app.include_router(gallery_router)
 app.include_router(puppy_router)
