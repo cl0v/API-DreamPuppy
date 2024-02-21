@@ -7,6 +7,9 @@ def upload_image(image: UploadFile, puppy_uuid: str) -> str:
     upload_url = f"https://api.cloudflare.com/client/v4/accounts/{cloudflare_account_id}/images/v1"
     # TODO: Mudar o nome para que seja condizente com o id do filhote
     image.filename = puppy_uuid
+    
+    d = image.__dict__
+    print(d)
 
     response = (
         requests.post(
