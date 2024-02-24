@@ -5,19 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Remote Attach",
+            "name": "Uvicorn",
             "type": "debugpy",
-            "request": "attach",
-            "connect": {
-                "host": "localhost",
-                "port": 5678
-            },
-            "pathMappings": [
-                {
-                    "localRoot": "${workspaceFolder}",
-                    "remoteRoot": "."
-                }
-            ]
+            "request": "launch",
+            "program": "main.py",
+            "console": "integratedTerminal"
         },
         {
             "name": "Docker: Python - Fastapi",

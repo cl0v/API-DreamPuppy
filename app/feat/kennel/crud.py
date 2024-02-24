@@ -7,38 +7,48 @@ from psycopg2.errors import UniqueViolation
 
 def add_kennel(db: Session, kennel: schemas.CreateKennel) -> models.KennelModel:
     model = models.KennelModel(**kennel.model_dump())
-    
+
+    if kennel.phone == "":
+        raise exceptions.KennelException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            message="Telefone inválido",
+        )
+
     duplicatePhone = (
-        db.query(models.KennelModel).filter(models.KennelModel.phone == kennel.phone).first()
+        db.query(models.KennelModel)
+        .filter(models.KennelModel.phone == kennel.phone)
+        .first()
     )
-    duplicateInstagram = (
-        db.query(models.KennelModel).filter(models.KennelModel.instagram == kennel.instagram).first()
+    duplicateInstagram = kennel.instagram != "" and (
+        db.query(models.KennelModel)
+        .filter(models.KennelModel.instagram == kennel.instagram)
+        .first()
     )
-    
+
     if duplicatePhone:
-         raise exceptions.KennelException(
-                status_code=status.HTTP_409_CONFLICT,
-                message="Esse telefone já foi cadastrado, tente outro.",
-            )
+        raise exceptions.KennelException(
+            status_code=status.HTTP_409_CONFLICT,
+            message="Esse telefone já foi cadastrado, tente outro.",
+        )
     if duplicateInstagram:
-         raise exceptions.KennelException(
-                status_code=status.HTTP_409_CONFLICT,
-                message="Esse instagram já foi cadastrado, tente outro.",
-            )
-    
+        raise exceptions.KennelException(
+            status_code=status.HTTP_409_CONFLICT,
+            message="Esse instagram já foi cadastrado, tente outro.",
+        )
+
     try:
         db.add(model)
-        db.commit()
+        db.flush()
         db.refresh(model)
     except IntegrityError as err:
         print(err.orig)
-        if(type(err.orig) is UniqueViolation):
-            
-        # duplicate_param_name = err.args[0].split("kennels.")[1]
+        if type(err.orig) is UniqueViolation:
+            # duplicate_param_name = err.args[0].split("kennels.")[1]
             raise exceptions.KennelException(
                 status_code=status.HTTP_409_CONFLICT,
                 message="Esse canil já está cadastrado, tente outro.",
             )
+    db.commit()
     return model
 
 
