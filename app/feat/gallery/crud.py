@@ -3,6 +3,7 @@ from fastapi import status
 from sqlalchemy.orm import Session
 from app.feat.puppy import models as puppy_models
 from app.feat.puppy.image_storage import get_image_public_url
+from sqlalchemy import select, func
 
 
 LIMIT_AMOUNT = 30
@@ -18,6 +19,10 @@ def fill_gallery(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
             status_code=status.HTTP_400_BAD_REQUEST,
             message="Too many items",
         )
+    # select puppy,uuid from medias where puppy in (SELECT id FROM puppies WHERE puppies.reviewed=True AND puppies.public_access=True);
+    
+    # SELECT id FROM puppies WHERE puppies.reviewed=True AND puppies.public_access=True
+    
     q = (
         db.query(
             puppy_models.Media.puppy,
@@ -32,11 +37,11 @@ def fill_gallery(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
             puppy_models.PuppyModel.reviewed == REVIEWED_DEFAULT,
             puppy_models.PuppyModel.public_access == VISIBLE_DEFAULT,
         )
-        # .group_by(
-        #     puppy_models.Media.puppy,
-        #     puppy_models.Media.uuid,
-        #     # puppy_models.PuppyModel.uuid,
-        # )
+        .group_by(
+            puppy_models.Media.puppy,
+            puppy_models.Media.uuid,
+            puppy_models.PuppyModel.uuid,
+        ).distinct(puppy_models.Media.puppy)
         .limit(amount)
         .all()
     )

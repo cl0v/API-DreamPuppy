@@ -169,8 +169,11 @@ def show_on_gallery(
     puppy_id: int,
 ) -> int:
     puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
-    puppy.reviewed = True
-    puppy.public_access = True
+    if(not puppy.reviewed):
+        puppy.reviewed = True
+    if(not puppy.public_access):
+        puppy.public_access = True
+    
     db.commit()
     return puppy_id
 
@@ -180,7 +183,10 @@ def hide_from_gallery(
     puppy_id: int,
 ) -> int:
     puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
-    puppy.reviewed = False
-    puppy.public_access = False
+    if(puppy.reviewed):
+        puppy.reviewed = False
+    if(puppy.public_access):
+        puppy.public_access = False
+        
     db.commit()
     return puppy_id
