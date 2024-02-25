@@ -2,8 +2,8 @@ from . import schemas, exceptions
 from fastapi import status
 from sqlalchemy.orm import Session
 from app.feat.puppy import models as puppy_models
-from app.feat.puppy.image_storage import get_image_public_url
-from sqlalchemy import select, func
+from app.feat.puppy.image_storage import get_gallery_image_url
+
 
 
 LIMIT_AMOUNT = 30
@@ -49,7 +49,7 @@ def fill_gallery(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
     result = [
         {
             "id": id,
-            "url": get_image_public_url(media_uuid),
+            "url": get_gallery_image_url(media_uuid),
         }
         for id, media_uuid in q
     ]

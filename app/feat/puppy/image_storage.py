@@ -31,5 +31,27 @@ def get_image_public_url(image_id: str) -> str:
             "Authorization": f"Bearer {cloudflare_token}",
         },
     )
-    img_url = response.json()["result"]["variants"][0]
+    imgs: list[str] = response.json()["result"]["variants"]
+    img_url = next(filter(contains_public_str, imgs), None)
     return img_url
+
+
+def contains_public_str(val):
+    return "public" in val
+
+
+def get_gallery_image_url(image_id: str) -> str:
+    get_url = f"https://api.cloudflare.com/client/v4/accounts/{cloudflare_account_id}/images/v1/{image_id}"
+    response = requests.get(
+        get_url,
+        headers={
+            "Authorization": f"Bearer {cloudflare_token}",
+        },
+    )
+    imgs: list[str] = response.json()["result"]["variants"]
+    img_url = next(filter(contains_gallery_str, imgs), None)
+    return img_url
+
+
+def contains_gallery_str(val):
+    return "gallery" in val
