@@ -102,12 +102,12 @@ def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
     return model
 
 
-def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
+def get_puppy(db: Session, puppy_id: int):
     puppy = (
         db.query(models.PuppyModel)
         .options(
-            joinedload(models.PuppyModel.vaccines),
-            joinedload(models.PuppyModel.vermifuges),
+            # joinedload(models.PuppyModel.vaccines),
+            # joinedload(models.PuppyModel.vermifuges),
             joinedload(models.PuppyModel.images),
         )
         .filter(models.PuppyModel.id == puppy_id)
@@ -135,8 +135,11 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
         )
         .all()
     )
+    
 
     d = puppy.__dict__
+    
+    # d["vaccines"] = d["vaccines"].all()
 
     d["breed"] = breed.name
 
