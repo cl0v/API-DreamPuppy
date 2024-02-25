@@ -43,6 +43,7 @@ def fill_gallery(db: Session) -> Page[schemas.GallerySchema]:
             puppy_models.Media.uuid,
             puppy_models.PuppyModel.uuid,
         )
+        .order_by(puppy_models.Media.puppy.desc())
         .distinct(puppy_models.Media.puppy)
         # .limit(amount)
         # .all()
