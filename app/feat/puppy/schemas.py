@@ -61,8 +61,8 @@ class OutPuppy(BaseModel):
     minimum_age_departure_in_days: int | None = None
 
     # Relational
-    vermifuges: list[Vermifuges] | None
-    vaccines: list[Vaccines] | None
+    # vermifuges: list[Vermifuges] | None
+    # vaccines: list[Vaccines] | None
 
 
 class OutputPuppyWithBreedStr(OutPuppy):

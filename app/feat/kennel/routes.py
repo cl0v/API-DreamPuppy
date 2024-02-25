@@ -1,14 +1,10 @@
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from app.database import get_db
 from . import schemas, crud
 from app.security import ignore_non_admins
 from app.feat.puppy import crud as puppy_crud
-from app.feat.puppy.schemas import (
-    PuppyRequestForm,
-    OutPuppy
-)
-from typing import Annotated
+from app.feat.puppy.schemas import OutPuppy
 
 router = APIRouter()
 
@@ -20,25 +16,6 @@ router = APIRouter()
 )
 async def get_kennel(kennel_id: int, db: Session = Depends(get_db)):
     return crud.get_kennel(db, kennel_id)
-
-
-# App Kennel
-@router.post(
-    "/kennels/{kennel_id}/puppies/new",
-    response_model=schemas.OutputAddPuppy,
-    dependencies=[Depends(ignore_non_admins)],
-)
-def add_puppy(
-    kennel_id: int,
-    puppy: Annotated[PuppyRequestForm, Depends()],
-    db: Session = Depends(get_db),
-    **images: Annotated[list[UploadFile], File()],
-):
-    n_puppy = puppy_crud.add_puppy(db, images=images, schema=puppy)
-
-    crud.relate_to_kennel_n_puppies(db, kennel_id=kennel_id, puppy_id=n_puppy.id)
-
-    return {"id": n_puppy.id, "message": "OK"}
 
 
 @router.get(

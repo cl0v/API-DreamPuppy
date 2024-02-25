@@ -5,36 +5,26 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Cloud Run: Run/Debug Locally",
-            "type": "cloudcode.cloudrun",
-            "request": "launch",
-            "build": {
-                "docker": {
-                    "path": "Dockerfile"
-                }
-            },
-            "image": "api",
-            "service": {
-                "name": "api",
-                "containerPort": 8080,
-                "resources": {
-                    "limits": {
-                        "memory": "256Mi"
-                    }
-                }
-            },
-            "target": {
-                "minikube": {}
-            },
-            "watch": true
-        },
-        {
-            "name": "Python: Arquivo Atual",
-            "type": "python",
+            "name": "Uvicorn",
+            "type": "debugpy",
             "request": "launch",
             "program": "main.py",
-            "console": "integratedTerminal",
-            "justMyCode": true
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Docker: Python - Fastapi",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "python": {
+                "pathMappings": [
+                    {
+                        "localRoot": "${workspaceFolder}",
+                        "remoteRoot": "/app"
+                    }
+                ],
+                "projectType": "fastapi"
+            }
         }
     ]
 }

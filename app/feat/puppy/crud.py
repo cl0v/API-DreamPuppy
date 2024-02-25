@@ -1,12 +1,14 @@
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError
-from . import schemas, models, exceptions
+from app.feat.puppy import schemas, models, exceptions
 from fastapi import status, UploadFile
 import json
 from datetime import datetime
 import uuid
-from app.feat.puppy.azure_storage import upload_img, get_url_by_key, create_container
+from app.feat.puppy.image_storage import upload_image, get_image_public_url
 from app.feat.kennel.models import KennelsNPuppies
+
+# from app.feat.puppy.azure_storage import  get_url_by_key, create_container
 
 
 def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
@@ -62,9 +64,8 @@ def add_puppy(
         )
         tmpListVacc.append(db_vaccine)
 
-
     # 1 unico container por iamgem
-    create_container(puppy_uuid)
+    # create_container(puppy_uuid)
     tmpImgs: list[models.Media] = []
     for image in images["images"]:
         db_media: models.Media = _upload_media(image, puppy_uuid)
@@ -95,23 +96,18 @@ def add_puppy(
 
 
 def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
-    media_uuid = uuid.uuid4().hex
-
-    
-    upload_img(puppy_uuid, media_uuid, img)
-
-    model = models.Media(
-        uuid=media_uuid,
-    )
+    # O upload_image precisa retornar o id para que seja salvo.
+    img_id = upload_image(img, puppy_uuid)
+    model = models.Media(uuid=img_id)
     return model
 
 
-def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
+def get_puppy(db: Session, puppy_id: int):
     puppy = (
         db.query(models.PuppyModel)
         .options(
-            joinedload(models.PuppyModel.vaccines),
-            joinedload(models.PuppyModel.vermifuges),
+            # joinedload(models.PuppyModel.vaccines),
+            # joinedload(models.PuppyModel.vermifuges),
             joinedload(models.PuppyModel.images),
         )
         .filter(models.PuppyModel.id == puppy_id)
@@ -139,12 +135,15 @@ def get_puppy(db: Session, puppy_id: int) -> models.PuppyModel:
         )
         .all()
     )
+    
 
     d = puppy.__dict__
+    
+    # d["vaccines"] = d["vaccines"].all()
 
     d["breed"] = breed.name
 
-    d["images"] = [get_url_by_key(puppy.uuid, i.uuid) for i in images]
+    d["images"] = [get_image_public_url(i.uuid) for i in images]
 
     return d
 
@@ -173,8 +172,11 @@ def show_on_gallery(
     puppy_id: int,
 ) -> int:
     puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
-    puppy.reviewed = True
-    puppy.public_access = True
+    if(not puppy.reviewed):
+        puppy.reviewed = True
+    if(not puppy.public_access):
+        puppy.public_access = True
+    
     db.commit()
     return puppy_id
 
@@ -184,7 +186,10 @@ def hide_from_gallery(
     puppy_id: int,
 ) -> int:
     puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
-    puppy.reviewed = False
-    puppy.public_access = False
+    if(puppy.reviewed):
+        puppy.reviewed = False
+    if(puppy.public_access):
+        puppy.public_access = False
+        
     db.commit()
     return puppy_id

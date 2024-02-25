@@ -1,9 +1,10 @@
-from . import schemas, exceptions
-from fastapi import status
+from . import schemas#, exceptions
+# from fastapi import status
 from sqlalchemy.orm import Session
 from app.feat.puppy import models as puppy_models
-from app.feat.puppy.azure_storage import get_url_by_key
-
+from app.feat.puppy.image_storage import get_gallery_image_url
+from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination import Page
 
 LIMIT_AMOUNT = 30
 # Ja foi revisado pelos moderadores
@@ -12,17 +13,22 @@ REVIEWED_DEFAULT = True
 VISIBLE_DEFAULT = True
 
 
-def fill_gallery(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
-    if amount > LIMIT_AMOUNT:
-        raise exceptions.GalleryException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            message="Too many items",
-        )
+def fill_gallery(db: Session) -> Page[schemas.GallerySchema]:
+    # TODO: Adicionar limitador de itens
+    # if amount > LIMIT_AMOUNT:
+    #     raise exceptions.GalleryException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         message="Too many items",
+    #     )
+    # select puppy,uuid from medias where puppy in (SELECT id FROM puppies WHERE puppies.reviewed=True AND puppies.public_access=True);
+
+    # SELECT id FROM puppies WHERE puppies.reviewed=True AND puppies.public_access=True
+
     q = (
         db.query(
             puppy_models.Media.puppy,
             puppy_models.Media.uuid,
-            puppy_models.PuppyModel.uuid,
+            # puppy_models.PuppyModel.uuid,
         )
         .join(
             puppy_models.PuppyModel,
@@ -37,15 +43,21 @@ def fill_gallery(db: Session, amount: int = 9) -> list[schemas.GallerySchema]:
             puppy_models.Media.uuid,
             puppy_models.PuppyModel.uuid,
         )
-        .limit(amount)
-        .all()
+        .order_by(puppy_models.Media.puppy.desc())
+        .distinct(puppy_models.Media.puppy)
+        # .limit(amount)
+        # .all()
     )
-    result = [
-        {
-            "id": id,
-            "url": get_url_by_key(puppy_uuid, media_uuid),
-        }
-        for id, media_uuid, puppy_uuid in q
-    ]
+    val = paginate(
+        db,
+        q,
+        transformer=lambda q: [
+            {
+                "id": id,
+                "url": get_gallery_image_url(media_uuid),
+            }
+            for id, media_uuid in q
+        ],
+    )
 
-    return result
+    return val

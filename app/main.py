@@ -10,10 +10,14 @@ from app.feat.puppy.exceptions import PuppyDetailsException, PuppyStorageExcepti
 from app.feat.kennel.exceptions import KennelException
 from app.env import TEST_NAME
 
+from fastapi_pagination import add_pagination
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(debug=True)
+# TODO: Utilizar esse boolean por enviroment.
+# Facilitando os deploys (Mesmo que eu não suba pro git, ainda buildará a imagem com as alterações locais)
+# Sujestão: Fazer com que a rotina do docker build seja feita por um CI/CD pode evitar confusão.
+app = FastAPI(debug=False)
 
 app.include_router(gallery_router)
 app.include_router(puppy_router)
@@ -64,3 +68,5 @@ async def azure_exception_handler(request: Request, exc: PuppyStorageException):
             "msg": exc.message,
         },
     )
+
+add_pagination(app)
