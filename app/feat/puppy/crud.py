@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, DatabaseError
 from app.feat.puppy import schemas, models, exceptions
 from fastapi import status, UploadFile
 import json
@@ -29,16 +29,32 @@ def list_breeds(db: Session) -> list[models.BreedModel]:
     return db.query(models.BreedModel).all()
 
 
+def add_puppy_images(db: Session, images: list[UploadFile], puppy_id: int):
+    # create_container(puppy_uuid)
+    tmpImgs: list[models.Media] = []
+    for image in images["images"]:
+        db_media: models.Media = _upload_media(image, puppy_id)
+        tmpImgs.append(db_media)
+
+    ids:list[int] = []
+    for m in tmpImgs:
+        m.puppy = puppy_id
+        db.add(m)
+        db.commit()
+        ids.append(m.id)
+    
+    return ids
+
+
 def add_puppy(
     db: Session,
-    images: list[UploadFile],
     schema: schemas.PuppyRequestForm,
 ) -> models.PuppyModel:
     puppy_uuid = uuid.uuid4().hex
     db_puppy = models.PuppyModel(
         uuid=puppy_uuid,
         breed=schema.breed,
-        pedigree=schema.pedigiree,
+        pedigree=schema.pedigree,
         microchip=schema.microchip,
         price=schema.price,
         birth=schema.birth,
@@ -46,51 +62,43 @@ def add_puppy(
         minimum_age_departure_in_days=schema.minimum_age_departure_in_days,
     )
 
-    jsonVerm = json.loads(schema.vermifuges)
-    tmpListVerm: list[models.Vermifuge] = []
-    for j in jsonVerm:
-        j["date"] = datetime.fromisoformat(j["date"])
-        db_vermifuge = models.Vermifuge(
-            **j,
-        )
-        tmpListVerm.append(db_vermifuge)
+    # jsonVerm = json.loads(schema.vermifuges)
+    # tmpListVerm: list[models.Vermifuge] = []
+    # for j in jsonVerm:
+    #     j["date"] = datetime.fromisoformat(j["date"])
+    #     db_vermifuge = models.Vermifuge(
+    #         **j,
+    #     )
+    #     tmpListVerm.append(db_vermifuge)
 
-    jsonVacc = json.loads(schema.vaccines)
-    tmpListVacc: list[models.Vaccine] = []
-    for j in jsonVacc:
-        j["date"] = datetime.fromisoformat(j["date"])
-        db_vaccine = models.Vaccine(
-            **j,
-        )
-        tmpListVacc.append(db_vaccine)
+    # jsonVacc = json.loads(schema.vaccines)
+    # tmpListVacc: list[models.Vaccine] = []
+    # for j in jsonVacc:
+    #     j["date"] = datetime.fromisoformat(j["date"])
+    #     db_vaccine = models.Vaccine(
+    #         **j,
+    #     )
+    #     tmpListVacc.append(db_vaccine)
 
-    # 1 unico container por iamgem
-    # create_container(puppy_uuid)
-    tmpImgs: list[models.Media] = []
-    for image in images["images"]:
-        db_media: models.Media = _upload_media(image, puppy_uuid)
-        tmpImgs.append(db_media)
-
-    # 1st important
-    db.add(db_puppy)
-    db.commit()
-    db.refresh(db_puppy)
-
-    # 2nd important
-    for m in tmpImgs:
-        m.puppy = db_puppy.id
-        db.add(m)
+    try:
+        # 1st important
+        db.add(db_puppy)
+        db.flush()
         db.commit()
-
+        db.refresh(db_puppy)
+    except DatabaseError as err:
+        # Maybe this can be rlly unsafe
+       db.rollback()
+       raise err
+       
     # 3rd and so on... importance
-    for m in tmpListVerm:
-        m.puppy = db_puppy.id
-        db.add(m)
-    for m in tmpListVacc:
-        m.puppy = db_puppy.id
-        db.add(m)
+    # for m in tmpListVerm:
+    #     m.puppy = db_puppy.id
+    #     db.add(m)
+    # for m in tmpListVacc:
+    #     m.puppy = db_puppy.id
+    #     db.add(m)
 
-    db.commit()
 
     return db_puppy
 
@@ -135,10 +143,9 @@ def get_puppy(db: Session, puppy_id: int):
         )
         .all()
     )
-    
 
     d = puppy.__dict__
-    
+
     # d["vaccines"] = d["vaccines"].all()
 
     d["breed"] = breed.name
@@ -172,11 +179,11 @@ def show_on_gallery(
     puppy_id: int,
 ) -> int:
     puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
-    if(not puppy.reviewed):
+    if not puppy.reviewed:
         puppy.reviewed = True
-    if(not puppy.public_access):
+    if not puppy.public_access:
         puppy.public_access = True
-    
+
     db.commit()
     return puppy_id
 
@@ -186,10 +193,10 @@ def hide_from_gallery(
     puppy_id: int,
 ) -> int:
     puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
-    if(puppy.reviewed):
+    if puppy.reviewed:
         puppy.reviewed = False
-    if(puppy.public_access):
+    if puppy.public_access:
         puppy.public_access = False
-        
+
     db.commit()
     return puppy_id

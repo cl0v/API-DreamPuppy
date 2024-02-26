@@ -1,34 +1,17 @@
 from pydantic import BaseModel
-from typing import Annotated
-from fastapi.param_functions import Form
 from datetime import datetime
 import json as json
+from fastapi import UploadFile
 
 
-class PuppyRequestForm:
-    def __init__(
-        self,
-        *,
-        breed: Annotated[int, Form()],
-        pedigree: Annotated[bool, Form()],
-        microchip: Annotated[bool, Form()],
-        minimum_age_departure_in_days: Annotated[int | None, Form()] = 60,
-        price: Annotated[int, Form()],
-        gender: Annotated[int, Form()],
-        birth: Annotated[datetime, Form()],
-        # Relational
-        vermifuges: Annotated[str | None, Form()],
-        vaccines: Annotated[str | None, Form()],
-    ):
-        self.breed = breed
-        self.pedigiree = pedigree
-        self.microchip = microchip
-        self.minimum_age_departure_in_days = minimum_age_departure_in_days
-        self.price = price
-        self.gender = gender
-        self.birth = birth
-        self.vermifuges = vermifuges
-        self.vaccines = vaccines
+class PuppyRequestForm (BaseModel):
+    breed: int
+    pedigree: bool
+    microchip: bool
+    minimum_age_departure_in_days: int | None = 60
+    price: int
+    gender: int
+    birth: datetime
 
 
 class NewBreed(BaseModel):

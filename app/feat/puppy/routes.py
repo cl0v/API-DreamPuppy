@@ -1,13 +1,23 @@
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile
 from sqlalchemy.orm import Session
 from app.database import get_db
 from . import schemas, crud
 import app.feat.kennel.crud as kennel_crud
 from app.security import ignore_non_admins
-from typing import Annotated
 
 router = APIRouter()
 
+
+@router.post(
+    "/puppies/{puppy_id}/images",
+    dependencies=[Depends(ignore_non_admins)],
+)
+def upload_puppy_images(
+    puppy_id: int,
+    db: Session = Depends(get_db),
+    **images: list[UploadFile],
+):
+    return crud.add_puppy_images(db, images, puppy_id=puppy_id)
 
 
 @router.post(
@@ -17,16 +27,14 @@ router = APIRouter()
 )
 def add_puppy(
     kennel_id: int,
-    puppy: Annotated[schemas.PuppyRequestForm, Depends()],
+    puppy: schemas.PuppyRequestForm,
     db: Session = Depends(get_db),
-    **images: Annotated[list[UploadFile], File()],
 ):
-    n_puppy = crud.add_puppy(db, images=images, schema=puppy)
+    n_puppy = crud.add_puppy(db, schema=puppy)
 
     kennel_crud.relate_to_kennel_n_puppies(db, kennel_id=kennel_id, puppy_id=n_puppy.id)
 
     return {"id": n_puppy.id, "message": "OK"}
-
 
 
 # App Gallery:
@@ -61,8 +69,6 @@ def get_kennel_id_from_puppy_id(
 )
 async def add_breed(breed: schemas.NewBreed, db: Session = Depends(get_db)):
     return crud.add_breed(db, breed)
-
-
 
 
 @router.get(
