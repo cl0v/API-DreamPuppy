@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY . /app
+COPY ./app /app
 
 # Ach q é redundante
 COPY ./requirements.txt /app/requirements.txt
