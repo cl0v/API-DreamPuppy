@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime,  Sequence #, Boolean,
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Sequence #, Boolean,
 from app.database import Base
 from sqlalchemy.sql import func
 
@@ -6,7 +6,7 @@ from sqlalchemy.sql import func
 class KennelModel(Base):
     __tablename__ = "kennels"
 
-    id = Column(Integer,Sequence('kennel_id_seq', start=11), primary_key=True, autoincrement=True)
+    id = Column(Integer, Sequence('kennels_id_seq'), primary_key=True, autoincrement=True)
     name = Column(String, nullable=False, index=True)
     created_at = Column(DateTime, nullable=False, default=func.now())
     phone = Column(String, nullable=False)

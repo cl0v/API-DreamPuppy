@@ -39,16 +39,18 @@ def add_kennel(db: Session, kennel: schemas.CreateKennel) -> models.KennelModel:
     try:
         db.add(model)
         db.flush()
-        db.refresh(model)
+        db.commit()
     except IntegrityError as err:
-        print(err.orig)
+        db.rollback()
         if type(err.orig) is UniqueViolation:
             # duplicate_param_name = err.args[0].split("kennels.")[1]
             raise exceptions.KennelException(
                 status_code=status.HTTP_409_CONFLICT,
                 message="Esse canil já está cadastrado, tente outro.",
             )
-    db.commit()
+        raise err
+    
+    db.refresh(model)
     return model
 
 
