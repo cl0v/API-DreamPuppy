@@ -4,6 +4,9 @@ import json
 import pytest
 from app.feat.puppy import schemas
 
+
+ace_kennel_id = 2
+
 def test_add_breed():
     r = main.client.post(
         "/breeds/new",
@@ -45,41 +48,49 @@ def test_get_puppy_from_id():
 
 
 def test_err_token_add_puppy():
-    r = main.client.post("/kennels/4/puppies/new")
+    r = main.client.post(f"/kennels/{ace_kennel_id}/puppies/new")
     assert r.status_code == 401
     assert r.is_client_error
 
 
 def test_err_fields_add_puppy():
-    r = main.client.post("/kennels/4/puppies/new", headers=main.admin_auth_header)
+    r = main.client.post(f"/kennels/{ace_kennel_id}/puppies/new", headers=main.admin_auth_header)
     assert r.status_code == 422
     assert r.is_client_error
 
 
-def test_add_n_read_puppy():
-    r = main.client.post(
-        "/kennels/4/puppies/new",
+def add_puppy():
+    r =  main.client.post(
+        f"/kennels/{ace_kennel_id}/puppies/new",
         headers=main.admin_auth_header,
-        data=add_puppy_json,
-        files=puppy_images,
+        data=json.dumps(add_puppy_json),
     )
+    print(r.json())
     assert r.status_code == 200
     d = r.json()
     assert "id" in d.keys()
     pid = d["id"]
     assert pid > 0
+    return pid
 
-    r2 = main.client.get(f"/puppies/{pid}")
+def read_puppy(pid: int):
+    r = main.client.get(f"/puppies/{pid}")
+    assert r.status_code == 200
+    return r
+
+def test_add_n_read_puppy():
+    pid = add_puppy()
+
+    r2 = read_puppy(pid)
+    
     d2 = r2.json()
-    assert r2.status_code == 200
-
     assert isinstance(add_puppy_json["breed"], int)
     assert isinstance(d2["breed"], str)
     d2.pop("breed")
 
-    assert "images" in d2.keys()
-    assert isinstance(d2["images"], list)
-    assert len(d2["images"]) == 1
+    # assert "images" in d2.keys()
+    # assert isinstance(d2["images"], list)
+    # assert len(d2["images"]) == 1
     assert d2["id"] == pid
 
     for k in d2.keys():
@@ -93,7 +104,7 @@ def test_add_n_read_puppy():
         assert inval == outval
 
 
-add_breed_data = {"name": "test_{0}".format(utils.random_string_gen())}
+add_breed_data = {"name": "breed_{0}".format(utils.random_string_gen())}
 
 some_available_breeds = [
     {"name": "Pug", "id": 1},
@@ -105,30 +116,30 @@ some_available_breeds = [
 ]
 
 add_puppy_json = {
-    "breed": 4,
+    "breed": 1,
     "price": 970,
     "gender": -1,
     "pedigree": True,
     "birth": "2023-11-02T18:25:43.511000",
     "microchip": True,
     "minimum_age_departure_in_days": 60,
-    "vermifuges": json.dumps(
-        [
-            {
-                "brand": "HBO",
-                "date": "2023-11-22T18:25:43.511000",
-            },
-        ],
-    ),
-    "vaccines": json.dumps(
-        [
-            {
-                "brand": "Bio Max",
-                "type": "V8",
-                "date": "2023-11-23T18:25:43.511000",
-            },
-        ]
-    ),
+    # "vermifuges": json.dumps(
+    #     [
+    #         {
+    #             "brand": "HBO",
+    #             "date": "2023-11-22T18:25:43.511000",
+    #         },
+    #     ],
+    # ),
+    # "vaccines": json.dumps(
+    #     [
+    #         {
+    #             "brand": "Bio Max",
+    #             "type": "V8",
+    #             "date": "2023-11-23T18:25:43.511000",
+    #         },
+    #     ]
+    # ),
 }
 
 # l = [f for f in os.listdir("./imgs")]

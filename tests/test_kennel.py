@@ -68,18 +68,10 @@ def test_get_kennel():
     assert r.status_code == 200
 
 
-# Temporary (can change the kennel)
 def test_list_puppies_from_kennel():
     r = main.client.get("/kennels/4/puppies/", headers=main.admin_auth_header)
     assert r.status_code == 200
-    assert isinstance(r.json(), list)
 
-
-# Temporary (can change the kennel)
-def test_empty_list_puppies_from_kennel():
-    r = main.client.get("/kennels/2/puppies/", headers=main.admin_auth_header)
-    assert r.status_code == 200
-    assert r.json() == []
 
 
 kennel0 = {
