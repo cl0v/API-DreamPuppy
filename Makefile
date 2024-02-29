@@ -1,4 +1,4 @@
-tag = 0.0.8
+tag = 0.0.9
 
 build:
 	docker build --platform linux/arm64 -t vianagallery/gallery-api:develop .
