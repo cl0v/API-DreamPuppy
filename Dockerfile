@@ -1,6 +1,10 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.12-slim
 
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /log
+
 EXPOSE 8080
 
 WORKDIR /app

@@ -5,7 +5,7 @@ build:
 bash:
 	docker run --entrypoint "/bin/sh" -it gallery
 push:
-	docker build  --platform linux/amd64  -t vianagallery/gallery-api:a.${tag} .
+	docker build  --platform linux/arm64  -t vianagallery/gallery-api:a.${tag} .
 	docker push vianagallery/gallery-api:a.${tag}
 inspect:
 	docker image inspect vianagallery/gallery-api:${tag}
@@ -23,5 +23,4 @@ profile:
 	docker push vianagallery/gallery-api:profile
 
 stable: backup
-	docker build --platform=linux/arm64 -t vianagallery/gallery-api:stable .
-	docker push vianagallery/gallery-api:stable
+	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:stable .
