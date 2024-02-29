@@ -9,6 +9,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
+ENV APIVERSION=0.0.9
+
 WORKDIR /app
 # Install pip requirements
 COPY requirements.txt .

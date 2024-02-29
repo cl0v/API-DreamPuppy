@@ -1,9 +1,7 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.12-slim
 
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM" > /log
+ENV APIVERSION=0.0.9
 
 EXPOSE 8080
 

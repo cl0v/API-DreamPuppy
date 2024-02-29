@@ -5,6 +5,7 @@ load_dotenv()
 
 
 TEST_NAME: str | None = os.getenv("TEST_NAME")
+APIVERSION: str | None = os.getenv("APIVERSION")
 
 ADMIN_JWT:  str | None = os.getenv("ADMIN_JWT")
 

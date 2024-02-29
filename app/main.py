@@ -8,7 +8,7 @@ from app.feat.kennel.routes import router as kennel_router
 from app.feat.gallery.exceptions import GalleryException
 from app.feat.puppy.exceptions import PuppyDetailsException, PuppyStorageException
 from app.feat.kennel.exceptions import KennelException
-from app.env import TEST_NAME
+from app.env import TEST_NAME, APIVERSION
 
 from fastapi_pagination import add_pagination
 
@@ -30,8 +30,8 @@ app.include_router(kennel_router)
 
 @app.get("/")
 def root():
-    name = TEST_NAME
-    return f"Hello {name} ."
+    
+    return f"Hello {TEST_NAME} : {APIVERSION}"
 
 
 @app.exception_handler(GalleryException)
