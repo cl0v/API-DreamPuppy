@@ -1,5 +1,5 @@
 services:
-  app:
+  gallery-debbug-off:
     build: .
     image: vianagallery/gallery-api:develop
     ports:
