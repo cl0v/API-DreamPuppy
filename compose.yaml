@@ -31,7 +31,7 @@ services:
     image: postgres
     restart: always
     volumes:
-      - 03-gallery-postgres-data:/var/lib/postgresql/data/
+      - gallery-data:/var/lib/postgresql/data/
     expose:
       - 5432
     ports:
@@ -55,7 +55,7 @@ services:
   #     - practice
 
 volumes:
-  03-gallery-postgres-data:
+  gallery-data:
   
 networks:
   practice:
