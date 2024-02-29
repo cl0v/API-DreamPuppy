@@ -1,20 +1,21 @@
 {
 	"version": "2.0.0",
 	"tasks": [
+		
 		{
 			"type": "docker-build",
 			"label": "docker-build",
 			"platform": "python",
 			"dockerBuild": {
-				"tag": "api:latest",
+				"tag": "api:develop",
 				"dockerfile": "${workspaceFolder}/Dockerfile",
 				"context": "${workspaceFolder}",
-				"pull": true
+				"pull": false
 			}
 		},
 		{
 			"type": "docker-run",
-			"label": "docker-run: debug",
+			"label": "docker-run: develop",
 			"dependsOn": [
 				"docker-build"
 			],
@@ -24,7 +25,7 @@
 					"--host",
 					"0.0.0.0",
 					"--port",
-					"8000"
+					"5678"
 				],
 				"module": "uvicorn"
 			}
