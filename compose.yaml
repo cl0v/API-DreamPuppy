@@ -9,7 +9,7 @@ services:
     depends_on:
       - postgres
     environment:
-      TEST_NAME: Version-3.1
+      TEST_NAME: Docker compose without debug
       POSTGRES_URL: postgresql+psycopg2://postgres:example@postgres:5432/database
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
       # AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net

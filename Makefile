@@ -2,6 +2,8 @@ tag = 0.0.7
 
 build:
 	docker build --platform linux/arm64 -t vianagallery/gallery-api:develop .
+bash:
+	docker run --entrypoint "/bin/sh" -it gallery
 push:
 	docker build  --platform linux/amd64  -t vianagallery/gallery-api:a.${tag} .
 	docker push vianagallery/gallery-api:a.${tag}
