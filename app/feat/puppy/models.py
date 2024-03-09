@@ -18,6 +18,9 @@ class PuppyModel(Base):
     # ? O que acontece quando tento criar 2 containers com mesmo nome?
     # hex Uuid do container de armazenamento dos arquivos e imagens.
     uuid = Column(String, nullable=False, unique=True)
+    
+    # Imagem do cover com a variante do gallerySmall.
+    cover_url =  Column(String, unique=True)
 
     # Extras + Valor
     microchip = Column(Boolean, default=False, nullable=False)
