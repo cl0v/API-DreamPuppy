@@ -6,7 +6,7 @@ from app.feat.gallery.routes import router as gallery_router
 from app.feat.puppy.routes import router as puppy_router
 from app.feat.kennel.routes import router as kennel_router
 from app.feat.gallery.exceptions import GalleryException
-from app.feat.puppy.exceptions import PuppyDetailsException, PuppyStorageException
+from app.feat.puppy.exceptions import PuppyException, PuppyStorageException, MediaException
 from app.feat.kennel.exceptions import KennelException
 from app.env import TEST_NAME, APIVERSION
 
@@ -44,8 +44,8 @@ async def gallery_exception_handler(request: Request, exc: GalleryException):
     )
 
 
-@app.exception_handler(PuppyDetailsException)
-async def puppy_exception_handler(request: Request, exc: PuppyDetailsException):
+@app.exception_handler(PuppyException)
+async def puppy_exception_handler(request: Request, exc: PuppyException):
     return JSONResponse(
         status_code=exc.status_code,
         content={
@@ -66,6 +66,15 @@ async def kennel_exception_handler(request: Request, exc: KennelException):
 
 @app.exception_handler(PuppyStorageException)
 async def azure_exception_handler(request: Request, exc: PuppyStorageException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "msg": exc.message,
+        },
+    )
+
+@app.exception_handler(MediaException)
+async def media_exception_handler(request: Request, exc: MediaException):
     return JSONResponse(
         status_code=exc.status_code,
         content={

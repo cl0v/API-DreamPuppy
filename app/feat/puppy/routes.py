@@ -11,13 +11,32 @@ router = APIRouter()
 @router.post(
     "/puppies/{puppy_id}/images",
     dependencies=[Depends(ignore_non_admins)],
+    description="""
+    Adiciona a(s) imagens ao filhote com o respectivo id.
+    Retorna o id da imagem na tabela das medias.
+    """,
 )
 def upload_puppy_images(
     puppy_id: int,
+    setCover: bool = False,
     db: Session = Depends(get_db),
     **images: list[UploadFile],
 ):
-    return crud.add_puppy_images(db, images, puppy_id=puppy_id)
+    return crud.add_puppy_images(db, images, puppy_id=puppy_id, setCover=setCover)
+
+
+@router.post(
+    "/puppies/{puppy_id}/images/coverurl",
+    dependencies=[Depends(ignore_non_admins)],
+)
+def update_cover(
+    puppy_id: int,
+    linkTo: int,
+    db: Session = Depends(get_db),
+):
+    # TODO: Implementar sistema de cover
+    crud.update_cover_url(db, puppy_id=puppy_id, linkToId = linkTo)
+    return 'OK'
 
 
 @router.post(

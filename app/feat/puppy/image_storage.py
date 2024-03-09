@@ -54,4 +54,4 @@ def get_gallery_image_url(image_id: str) -> str:
 
 
 def contains_gallery_str(val):
-    return "gallery" in val
+    return "gallerySmall" in val
