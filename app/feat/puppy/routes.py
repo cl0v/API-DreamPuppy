@@ -35,8 +35,8 @@ def update_cover(
     db: Session = Depends(get_db),
 ):
     # TODO: Implementar sistema de cover
-    crud.update_cover_url(db, puppy_id=puppy_id, linkToId = linkTo)
-    return 'OK'
+    crud.update_cover_url(db, puppy_id=puppy_id, linkToId=linkTo)
+    return "OK"
 
 
 @router.post(
@@ -65,7 +65,8 @@ def get_puppy(
     puppy_id: int,
     db: Session = Depends(get_db),
 ):
-    return crud.get_puppy(db, puppy_id)
+    puppy = crud.get_puppy(db, puppy_id)
+    return puppy
 
 
 # App Gallery:

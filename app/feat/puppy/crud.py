@@ -33,7 +33,9 @@ def list_breeds(db: Session) -> list[models.BreedModel]:
     return db.query(models.BreedModel).all()
 
 
-def add_puppy_images(db: Session, images: list[UploadFile], puppy_id: int, setCover: bool):
+def add_puppy_images(
+    db: Session, images: list[UploadFile], puppy_id: int, setCover: bool
+):
     # create_container(puppy_uuid)
     tmpImgs: list[models.Media] = []
     for image in images["images"]:
@@ -46,10 +48,10 @@ def add_puppy_images(db: Session, images: list[UploadFile], puppy_id: int, setCo
         db.add(m)
         db.commit()
         ids.append(m.id)
-    
+
     if setCover:
-        update_cover_url(db, puppy_id=puppy_id, linkToId = ids[0])
-    
+        update_cover_url(db, puppy_id=puppy_id, linkToId=ids[0])
+
     return ids
 
 
@@ -158,8 +160,8 @@ def add_puppy(
 
 def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
     # O upload_image precisa retornar o id para que seja salvo.
-    img_id = upload_image(img, puppy_uuid)
-    model = models.Media(uuid=img_id)
+    img_id, public_url = upload_image(img, puppy_uuid)
+    model = models.Media(uuid=img_id, public_url=public_url)
     return model
 
 
@@ -199,11 +201,16 @@ def get_puppy(db: Session, puppy_id: int):
 
     d = puppy.__dict__
 
+    d["images"] = []
+    for i in images:
+        if i.public_url is None:
+            continue
+        else:
+            d["images"].append(i.public_url)
+
     # d["vaccines"] = d["vaccines"].all()
 
     d["breed"] = breed.name
-
-    d["images"] = [get_image_public_url(i.uuid) for i in images]
 
     return d
 

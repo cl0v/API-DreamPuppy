@@ -20,20 +20,22 @@ def upload_image(image: UploadFile, puppy_uuid: str) -> str:
     )
 
     img_id = response[0].json()["result"]["id"]
-    return img_id
-
-
-def get_image_public_url(image_id: str) -> str:
-    get_url = f"https://api.cloudflare.com/client/v4/accounts/{cloudflare_account_id}/images/v1/{image_id}"
-    response = requests.get(
-        get_url,
-        headers={
-            "Authorization": f"Bearer {cloudflare_token}",
-        },
-    )
-    imgs: list[str] = response.json()["result"]["variants"]
+    imgs = response[0].json()["result"]["variants"]
     img_url = next(filter(contains_public_str, imgs), None)
-    return img_url
+    return img_id, img_url
+
+
+# def get_image_public_url(image_id: str) -> str:
+#     get_url = f"https://api.cloudflare.com/client/v4/accounts/{cloudflare_account_id}/images/v1/{image_id}"
+#     response = requests.get(
+#         get_url,
+#         headers={
+#             "Authorization": f"Bearer {cloudflare_token}",
+#         },
+#     )
+#     imgs: list[str] = response.json()["result"]["variants"]
+#     img_url = next(filter(contains_public_str, imgs), None)
+#     return img_url
 
 
 def contains_public_str(val):
