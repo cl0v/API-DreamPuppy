@@ -69,6 +69,19 @@ def get_puppy(
     return puppy
 
 
+# TODO: Remover rapidamente após o uso.
+@router.put(
+    "/puppies/{puppy_id}/fix",
+    response_model=str,
+    dependencies=[Depends(ignore_non_admins)],
+)
+def fix_puppy(
+    puppy_id: int,
+    db: Session = Depends(get_db),
+):
+    return crud.fix_puppy_images(db, puppy_id)
+
+
 # App Gallery:
 @router.get(
     "/puppies/{puppy_id}/kennel",
@@ -109,6 +122,7 @@ def show_puppy_on_gallery(
 ):
     pid = crud.show_on_gallery(db, puppy_id)
     return {"id": pid, "message": "OK"}
+
 
 
 @router.put(

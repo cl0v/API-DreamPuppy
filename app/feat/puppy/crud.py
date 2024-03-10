@@ -165,6 +165,34 @@ def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
     return model
 
 
+def fix_puppy_images(db: Session, puppy_id: int) -> str:
+    images = (
+        db.query(models.Media)
+        .filter(
+            models.Media.puppy == puppy_id,
+        )
+        .all()
+    )
+    c = 0
+    f = 0
+    for i in images:
+        if i.public_url is None:
+            if i.uuid is not None:
+                img_public_url = get_image_public_url(i.uuid)
+                i.public_url = img_public_url
+                f += 1
+                db.commit()
+            else:
+                return "Comportamento inexperado! Verifique"
+        else:
+            c += 1
+
+    if c > 0:
+        return f"Imagens ignoradas {c}; Imagens corrigidas {f}"
+
+    return f"Número de imagens corrigidas: {f}"
+
+
 def get_puppy(db: Session, puppy_id: int):
     puppy = (
         db.query(models.PuppyModel)
