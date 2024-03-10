@@ -43,9 +43,6 @@ def fill_gallery(db: Session) -> Page[schemas.GallerySchema]:
         # .all()
     )
     
-    # li = [{'id': id, 'url': get_gallery_image_url(media_uuid),} for id, media_uuid in q]
-    
-    # print(li.__len__())
     
     val = paginate(
         db,
@@ -60,3 +57,11 @@ def fill_gallery(db: Session) -> Page[schemas.GallerySchema]:
     )
 
     return val
+
+
+
+def hide_puppies_without_public_image(db: Session) -> list[str]:
+    #TODO: Implement
+    # Filhotes que estao sendo exibidos porém public_url das medias estão sem nenhum valor.
+    
+    pass
