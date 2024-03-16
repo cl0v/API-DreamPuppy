@@ -1,15 +1,17 @@
+version: '3.4'
+
 services:
-  gallery-debbug-off:
-    build: .
-    image: vianagallery/gallery-api:develop
+  gallery-api:
+    image: compose-debug
+    build:
+      context: .
+      dockerfile: ../Dockerfile.debug
+    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8080"]
     ports:
       - 8080:8080
-    working_dir: /app
-    restart: always
-    depends_on:
-      - postgres
+      - 5678:5678
     environment:
-      TEST_NAME: Docker compose without debug
+      TEST_NAME: Compose Debug Mode
       POSTGRES_URL: postgresql+psycopg2://postgres:example@postgres:5432/database
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
       # AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
@@ -27,11 +29,16 @@ services:
         - action: rebuild
           path: package.json
 
+
+  ###         ####        ###
+  # Containers adicionais para funcionamento do sistema.
+  ###         ####        ###
+
   postgres:
     image: postgres
     restart: always
     volumes:
-      - gallery-data:/var/lib/postgresql/data/
+      - gallery-data-debug:/var/lib/postgresql/data/
     expose:
       - 5432
     ports:
@@ -55,7 +62,7 @@ services:
   #     - practice
 
 volumes:
-  gallery-data:
+  gallery-data-debug:
   
 networks:
   practice:
