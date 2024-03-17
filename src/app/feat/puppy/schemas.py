@@ -8,7 +8,6 @@ class PuppyRequestForm (BaseModel):
     breed: int
     pedigree: bool
     microchip: bool
-    weight: int
     minimum_age_departure_in_days: int | None = 60
     price: int
     gender: int
@@ -33,18 +32,16 @@ class Vaccines(BaseModel):
     type: str
     date: datetime
 
+
 class OutPuppy(BaseModel):
-    # Trazer o images pra ca e todo filhote retornado irá ter uma lista de fotos. [task 213123312321]
-    #images: list[str]
     id: int
     breed: int
     pedigree: bool
     price: int
-    weight: int | None
     gender: int
     birth: datetime
     microchip: bool
-    minimum_age_departure_in_days: int | None
+    minimum_age_departure_in_days: int | None = None
 
     # Relational
     # vermifuges: list[Vermifuges] | None

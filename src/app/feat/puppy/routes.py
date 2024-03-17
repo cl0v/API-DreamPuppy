@@ -49,11 +49,11 @@ def add_puppy(
     puppy: schemas.PuppyRequestForm,
     db: Session = Depends(get_db),
 ):
-    puppy_id = crud.add_puppy(db, schema=puppy)
+    n_puppy = crud.add_puppy(db, schema=puppy)
 
-    kennel_crud.relate_to_kennel_n_puppies(db, kennel_id=kennel_id, puppy_id=puppy_id)
+    kennel_crud.relate_to_kennel_n_puppies(db, kennel_id=kennel_id, puppy_id=n_puppy.id)
 
-    return {"id": puppy_id, "message": "OK"}
+    return {"id": n_puppy.id, "message": "OK"}
 
 
 # App Gallery:
