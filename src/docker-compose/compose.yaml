@@ -1,18 +1,24 @@
 version: '3.4'
 
+volumes:
+  compose-volume:
+  
+networks:
+  practice:
+
 services:
   gallery-api:
     image: compose-debug
     build:
-      context: .
-      dockerfile: ../Dockerfile.debug
-    command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8080"]
+      context: ..
+    # Enable to debug
+    # command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8080"]
     ports:
       - 8080:8080
       - 5678:5678
     environment:
       TEST_NAME: Compose Debug Mode
-      POSTGRES_URL: postgresql+psycopg2://postgres:example@postgres:5432/database
+      POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
       # AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
       CFI_ID: 396a1fd05689c45f07bdd191705e98dd
@@ -34,22 +40,28 @@ services:
   # Containers adicionais para funcionamento do sistema.
   ###         ####        ###
 
-  postgres:
+  alembic:
+    build:
+      context: ../../alembic
+    image: alembic
+    environment: 
+      POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
+    networks:
+      - practice
+
+  db:
     image: postgres
     restart: always
     volumes:
-      - gallery-data-debug:/var/lib/postgresql/data/
-    expose:
-      - 5432
+      - compose-volume:/var/lib/postgresql/data/
     ports:
       - 5432
     # env_file:
     #   - .env
     environment:
-      POSTGRES_PASSWORD: example
-      # POSTGRES_PASSWORD: fa738ce94be6106044d5dcb0b799deef23228c4bbf278d83196c4aacb4e2db9e
-      POSTGRES_USER: postgres
-      POSTGRES_DB: database
+      POSTGRES_PASSWORD: pwd
+      POSTGRES_USER: usr
+      POSTGRES_DB: db
     networks:
         - practice
 
@@ -60,9 +72,3 @@ services:
   #     - 8080:8080
   #   networks:
   #     - practice
-
-volumes:
-  gallery-data-debug:
-  
-networks:
-  practice:
