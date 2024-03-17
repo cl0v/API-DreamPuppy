@@ -24,3 +24,8 @@ profile:
 
 stable: backup
 	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:stable .
+
+up:
+	docker compose up -d --always-recreate-deps
+down:
+	docker compose down
