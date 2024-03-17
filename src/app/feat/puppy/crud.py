@@ -97,9 +97,9 @@ def update_cover_url(db: Session, puppy_id: int, linkToId: int):
 def add_puppy(
     db: Session,
     schema: schemas.PuppyRequestForm,
-) -> models.PuppyModel:
+) -> int:
+    
     # TODO: Verificar se a raça existe na lista de raças.
-
     #     sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table "puppies" violates foreign key constraint "puppies_breed_fkey"
     #     DETAIL:  Key (breed)=(25) is not present in table "breeds".
 
@@ -152,7 +152,7 @@ def add_puppy(
     #     m.puppy = db_puppy.id
     #     db.add(m)
 
-    return db_puppy
+    return db_puppy.id
 
 
 def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
@@ -190,6 +190,7 @@ def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
 #     return f"Número de imagens corrigidas: {f}"
 
 
+# Criar um endpoint que recebe uma lista de ids e retorna varios filhotes com todas as fotos [task 213123312321]
 def get_puppy(db: Session, puppy_id: int):
     puppy = (
         db.query(models.PuppyModel)
