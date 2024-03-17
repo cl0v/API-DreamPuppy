@@ -8,14 +8,15 @@ networks:
 
 services:
   gallery-api:
-    image: compose-debug
+    image: gallery-compose
     build:
       context: ..
     # Enable to debug
     # command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8080"]
     ports:
       - 8080:8080
-      - 5678:5678
+      # Enable to debug
+      # - 5678:5678
     environment:
       TEST_NAME: Compose Debug Mode
       POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
@@ -25,15 +26,17 @@ services:
       CFI_TOKEN: aca-0JGeQfgqcseF1zDc5YSVf63Mp0Xs2cOtLv-J
     networks:
       - practice
-    develop:
-      watch:
-        - action: sync
-          path: ./app
-          target: /app/app
-          ignore:
-            - __pycache__/
-        - action: rebuild
-          path: package.json
+    # Enable to debug
+    # develop:
+    #   watch:
+    #     - action: sync
+    #       path: ./app
+    #       target: /app/app
+    #       ignore:
+    #         - __pycache__/
+    #     - action: rebuild
+    #       path: package.json
+    
 
 
   ###         ####        ###
@@ -56,8 +59,6 @@ services:
       - compose-volume:/var/lib/postgresql/data/
     ports:
       - 5432
-    # env_file:
-    #   - .env
     environment:
       POSTGRES_PASSWORD: pwd
       POSTGRES_USER: usr

@@ -1,7 +1,7 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.12-slim
 
-ENV APIVERSION=0.0.9
+ENV APIVERSION=1.1.0
 
 EXPOSE 8080
 

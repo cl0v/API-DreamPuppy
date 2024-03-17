@@ -1,0 +1,9 @@
+# Ignore everything
+*
+
+# Allow files and directories
+# !/file.txt
+!../app
+!../alembic
+!../requirements.txt
+!../dev-requirements.txt
