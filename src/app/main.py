@@ -57,6 +57,7 @@ async def puppy_exception_handler(request: Request, exc: PuppyException):
         status_code=exc.status_code,
         content={
             "msg": exc.message,
+            "id":exc.id,
         },
     )
 

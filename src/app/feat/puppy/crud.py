@@ -13,12 +13,25 @@ from app.feat.kennel.models import KennelsNPuppies
 
 
 def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
+    # Verifica se a raça já está cadastrada
+    breedAlreadyRegistered: models.BreedModel | None = (
+        db.query(models.BreedModel).where(models.BreedModel.name == breed.name).first()
+    )
+    if breedAlreadyRegistered is not None:
+        raise exceptions.PuppyException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            message="Raça já cadastrada",
+            puppy_id=breedAlreadyRegistered.id,
+        )
+
     new_breed = models.BreedModel(**breed.model_dump())
+
     try:
         db.add(new_breed)
         db.commit()
         db.refresh(new_breed)
-    except IntegrityError:
+    except IntegrityError as err:
+        print(err._message)
         raise exceptions.PuppyException(
             status_code=status.HTTP_400_BAD_REQUEST,
             message="Raça já cadastrada",
@@ -104,15 +117,10 @@ def add_puppy(
     #     DETAIL:  Key (breed)=(25) is not present in table "breeds".
 
     puppy_uuid = uuid.uuid4().hex
+
     db_puppy = models.PuppyModel(
+        **schema.model_dump(),
         uuid=puppy_uuid,
-        breed=schema.breed,
-        pedigree=schema.pedigree,
-        microchip=schema.microchip,
-        price=schema.price,
-        birth=schema.birth,
-        gender=schema.gender,
-        minimum_age_departure_in_days=schema.minimum_age_departure_in_days,
     )
 
     # jsonVerm = json.loads(schema.vermifuges)

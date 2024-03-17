@@ -15,6 +15,8 @@ class PuppyModel(Base):
     pedigree = Column(Boolean, default=False, nullable=False)
     birth = Column(DateTime, index=True)
     gender = Column(Integer, nullable=True, index=True)
+    weight = Column(Integer, nullable=True)
+    prio = Column(Integer, nullable=True, default=1)
     # ? O que acontece quando tento criar 2 containers com mesmo nome?
     # hex Uuid do container de armazenamento dos arquivos e imagens.
     uuid = Column(String, nullable=False, unique=True)

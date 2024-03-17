@@ -1,4 +1,4 @@
-tag = 0.0.13
+tag = 1.1.2
 
 build:
 	docker build --platform linux/arm64 -t vianagallery/gallery-api:develop .
@@ -14,15 +14,16 @@ run:
 compose:
 	docker compose up
 
-backup:
-	docker build --platform=linux/arm64 -t vianagallery/gallery-api:b.${tag} .
-	docker push vianagallery/gallery-api:b.${tag}
+develop:
+	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:D${tag} .
+	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:develop .
 
 profile:
-	docker build --platform=linux/arm64 -t vianagallery/gallery-api:profile .
-	docker push vianagallery/gallery-api:profile
+	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:p${tag} .
+	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:profile .
 
-stable: backup
+stable:
+	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:${tag} .
 	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:stable .
 
 up:

@@ -6,13 +6,16 @@ import json as json
 class PuppyRequestForm(BaseModel):
     breed: int
     price: int
-    pedigree: bool
-    microchip: bool
-    weight: int | None = None
-    minimum_age_departure_in_days: int | None = 60
     gender: int
     birth: datetime
+    microchip: bool
+    prio: int | None = 1
+    weight: int | None = None
+    pedigree: bool
+    minimum_age_departure_in_days: int | None = 60
 
+    class Config:
+        orm_mode = True
 
 class NewBreed(BaseModel):
     name: str
@@ -43,6 +46,7 @@ class OutPuppy(BaseModel):
     gender: int
     birth: datetime
     microchip: bool
+    weight: int
     minimum_age_departure_in_days: int | None = None
 
     # Relational
