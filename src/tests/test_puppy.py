@@ -7,6 +7,7 @@ from app.feat.puppy import schemas
 
 ace_kennel_id = 2
 
+
 def test_add_breed():
     r = main.client.post(
         "/breeds/new",
@@ -30,7 +31,7 @@ def test_err_duplicate_add_breed():
         content=json.dumps(add_breed_data),
         headers=main.admin_auth_header,
     )
-    assert r.status_code == 400
+    assert r.status_code == 409
     assert r.json() == {"msg": "Raça já cadastrada"}
     assert r.is_client_error
 
@@ -54,13 +55,15 @@ def test_err_token_add_puppy():
 
 
 def test_err_fields_add_puppy():
-    r = main.client.post(f"/kennels/{ace_kennel_id}/puppies/new", headers=main.admin_auth_header)
+    r = main.client.post(
+        f"/kennels/{ace_kennel_id}/puppies/new", headers=main.admin_auth_header
+    )
     assert r.status_code == 422
     assert r.is_client_error
 
 
 def add_puppy():
-    r =  main.client.post(
+    r = main.client.post(
         f"/kennels/{ace_kennel_id}/puppies/new",
         headers=main.admin_auth_header,
         data=json.dumps(add_puppy_json),
@@ -73,16 +76,18 @@ def add_puppy():
     assert pid > 0
     return pid
 
+
 def read_puppy(pid: int):
     r = main.client.get(f"/puppies/{pid}")
     assert r.status_code == 200
     return r
 
+
 def test_add_n_read_puppy():
     pid = add_puppy()
 
     r2 = read_puppy(pid)
-    
+
     d2 = r2.json()
     assert isinstance(add_puppy_json["breed"], int)
     assert isinstance(d2["breed"], str)

@@ -15,7 +15,8 @@ class PuppyRequestForm(BaseModel):
     minimum_age_departure_in_days: int | None = 60
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
 
 class NewBreed(BaseModel):
     name: str
@@ -46,7 +47,7 @@ class OutPuppy(BaseModel):
     gender: int
     birth: datetime
     microchip: bool
-    weight: int
+    weight: int | None
     minimum_age_departure_in_days: int | None = None
 
     # Relational
@@ -54,6 +55,20 @@ class OutPuppy(BaseModel):
     # vaccines: list[Vaccines] | None
 
 
-class OutputPuppyWithBreedStr(OutPuppy):
+class OutPuppyDetails(OutPuppy):
     breed: str
-    images: list[str]
+    images: list[str] | None
+
+
+class InInUpdatePuppyDetails(BaseModel):
+    breed: int | None = None
+    pedigree: bool | None = None
+    price: int | None = None
+    microchip: bool | None = None
+    weight: int | None = None
+
+    class Config:
+        from_attributes = True
+
+    #     data =
+    # (exclude_unset=True)

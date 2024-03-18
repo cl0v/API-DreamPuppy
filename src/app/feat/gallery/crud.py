@@ -1,4 +1,5 @@
-from . import schemas#, exceptions
+from . import schemas  # , exceptions
+
 # from fastapi import status
 from sqlalchemy.orm import Session
 from app.feat.puppy import models as puppy_models
@@ -27,35 +28,39 @@ def fill_gallery(db: Session) -> Page[schemas.GallerySchema]:
         db.query(
             puppy_models.PuppyModel.id,
             puppy_models.PuppyModel.cover_url,
-            # puppy_models.PuppyModel.uuid,
+            puppy_models.PuppyModel.prio,
         )
         .filter(
             puppy_models.PuppyModel.reviewed == REVIEWED_DEFAULT,
             puppy_models.PuppyModel.public_access == VISIBLE_DEFAULT,
-            puppy_models.PuppyModel.cover_url.is_not(None)
+            puppy_models.PuppyModel.cover_url.is_not(None),
         )
         .group_by(
             puppy_models.PuppyModel.id,
             puppy_models.PuppyModel.cover_url,
         )
-        .order_by(puppy_models.PuppyModel.id.desc())
+        .order_by(
+            puppy_models.PuppyModel.prio.desc(),
+            puppy_models.PuppyModel.id.desc(),
+        )
         # .limit(3)
         # .all()
     )
-    
+
     # li = [{'id': id, 'url': get_gallery_image_url(media_uuid),} for id, media_uuid in q]
-    
+
     # print(li.__len__())
-    
+
     val = paginate(
         db,
         q,
         transformer=lambda q: [
             {
                 "id": id,
-                "url": cover_url
+                "url": cover_url,
+                "extras": str(prio)
             }
-            for id, cover_url in q
+            for id, cover_url, prio in q
         ],
     )
 

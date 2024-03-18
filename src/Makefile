@@ -1,4 +1,4 @@
-tag = 1.1.2
+tag = 1.1.3
 
 build:
 	docker build --platform linux/arm64 -t vianagallery/gallery-api:develop .
@@ -15,7 +15,7 @@ compose:
 	docker compose up
 
 develop:
-	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:D${tag} .
+	docker build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:D${tag} .
 	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:develop .
 
 profile:
@@ -30,3 +30,12 @@ up:
 	docker compose up -d --always-recreate-deps
 down:
 	docker compose down
+
+# envon:
+# 	source ../bin/activate
+
+# envoff:
+# 	deactivate
+
+uvi: 
+	../bin/uvicorn app.main:app --reload --port=9900

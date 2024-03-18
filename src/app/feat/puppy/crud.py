@@ -19,7 +19,7 @@ def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
     )
     if breedAlreadyRegistered is not None:
         raise exceptions.PuppyException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             message="Raça já cadastrada",
             puppy_id=breedAlreadyRegistered.id,
         )
@@ -196,6 +196,21 @@ def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
 #         return f"Imagens ignoradas {c}; Imagens corrigidas {f}"
 
 #     return f"Número de imagens corrigidas: {f}"
+
+
+def update_puppy(
+    db: Session, puppy: schemas.OutPuppyDetails, puppy_id: int
+) -> schemas.OutPuppy:
+    db_puppy = (
+        db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
+    )
+
+    puppy.model_dump(exclude_unset=True)
+    db_puppy.weight = 3000
+    db.add(db_puppy)
+    db.commit()
+    db.refresh(db_puppy)
+    return db_puppy
 
 
 def get_puppy(db: Session, puppy_id: int):

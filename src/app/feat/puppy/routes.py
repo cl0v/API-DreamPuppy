@@ -57,9 +57,24 @@ def add_puppy(
 
 
 # App Gallery:
+@router.patch(
+    "/puppies/{puppy_id}",
+    response_model=schemas.OutPuppy,
+    dependencies=[Depends(ignore_non_admins)],
+)
+def update_puppy(
+    puppy_id: int,
+    puppy: schemas.OutPuppyDetails,
+    db: Session = Depends(get_db),
+):
+    puppy = crud.update_puppy(db, puppy, puppy_id)
+    return puppy
+
+
+# App Gallery:
 @router.get(
     "/puppies/{puppy_id}",
-    response_model=schemas.OutputPuppyWithBreedStr,
+    response_model=schemas.OutPuppyDetails,
 )
 def get_puppy(
     puppy_id: int,
@@ -109,7 +124,6 @@ def show_puppy_on_gallery(
 ):
     pid = crud.show_on_gallery(db, puppy_id)
     return {"id": pid, "message": "OK"}
-
 
 
 @router.put(

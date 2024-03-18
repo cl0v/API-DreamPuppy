@@ -37,8 +37,13 @@ def root():
 
 
 @app.get("/policy.pdf", response_class=FileResponse)
-def policy():
+def policy_pdf():
     return "app/assets/policy.pdf"
+
+
+@app.get("/policy.docx", response_class=FileResponse)
+def policy_docx():
+    return "app/assets/policy.docx"
 
 
 @app.exception_handler(GalleryException)
@@ -57,7 +62,7 @@ async def puppy_exception_handler(request: Request, exc: PuppyException):
         status_code=exc.status_code,
         content={
             "msg": exc.message,
-            "id":exc.id,
+            "id": exc.id,
         },
     )
 
