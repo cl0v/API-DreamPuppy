@@ -1,5 +1,5 @@
 from app.database import engine, Base
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi import Request, FastAPI
 
 from app.feat.gallery.routes import router as gallery_router
@@ -44,6 +44,32 @@ def policy_pdf():
 @app.get("/policy.docx", response_class=FileResponse)
 def policy_docx():
     return "app/assets/policy.docx"
+
+
+@app.get("/redir")
+def redirToDownloads(isAndroid: bool = False):
+    url_loja = "https://apps.apple.com/br/app/dreampuppy-galeria-de-filhotes/id6478811369?l=en-GB"
+    if isAndroid:
+        url_loja = (
+            "https://play.google.com/store/apps/details?id=com.dreampuppy.gallery&pli=1"
+        )
+    html = """
+<!DOCTYPE html>  <!-Define o tipo de documento->
+<html>
+<head>
+    <meta charset="utf-8"/> <!-Define o conjunto de caracteres usados no documento->
+    <meta http-equiv="refresh" content="0; URL='{URLHERE}'"/> <!-Define o redirecionamento, tempo e URL->
+<title>Ver na Loja</title> <!-Define o título do documento na aba do navegador->
+</head>
+    <body>
+    </body>
+</html>
+"""
+    split = html.split("\n")
+    split[5] = split[5].replace("{URLHERE}", url_loja)
+    dyn_val_html = "\n".join(split)
+
+    return HTMLResponse(content=dyn_val_html)
 
 
 @app.exception_handler(GalleryException)
