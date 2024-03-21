@@ -1,0 +1,10 @@
+{
+    "python.testing.pytestArgs": [
+        "."
+    ],
+    "python.testing.cwd": "tests",
+    "python.testing.unittestEnabled": false,
+    "pytest_runner.pytest_exec": "pytest",
+    // "pytest_runner.pytest_options": "--no-cov",
+    "python.testing.pytestEnabled": true,
+}
