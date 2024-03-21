@@ -1,7 +1,7 @@
 import os
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
+from sqlalchemy import engine_from_config, create_engine
 from sqlalchemy import pool
 
 from alembic import context
@@ -16,13 +16,12 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+postgres: str | None = os.getenv("POSTGRES_URL")
 
-if os.getenv("POSTGRES_URL") is not None:
-    postgres :  str | None = os.getenv("POSTGRES_URL")
-
-    config.set_main_option(
-        "sqlalchemy.url", postgres
-    )
+if postgres is not None:
+    config.set_main_option("sqlalchemy.url", postgres)
+else:
+    postgres = "postgresql+psycopg2://postgres:example@localhost:5432/viana"
 
 # add your model's MetaData object here
 # for 'autogenerate' support
@@ -67,11 +66,14 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
-        prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
-    )
+    # connectable = engine_from_config(
+    #     config.get_section(config.config_ini_section, {}),
+    #     prefix="sqlalchemy.",
+    #     poolclass=pool.NullPool,
+    # )
+    
+    connectable = create_engine(postgres)
+
 
     with connectable.connect() as connection:
         context.configure(

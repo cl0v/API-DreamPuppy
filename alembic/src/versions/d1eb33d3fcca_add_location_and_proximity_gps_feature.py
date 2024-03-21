@@ -30,7 +30,7 @@ def upgrade() -> None:
     op.add_column(
         "kennels",
         sa.Column(
-            "loc",
+            "geo",
             sa.Integer,
             sa.ForeignKey("geo.id"),
             doc="Referencia a tabela de geo",
