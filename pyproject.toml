@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gallery_api_impl"
+version = "1.0.0"
+authors = [
+  { name="Marcelo Viana", email="marcelofv12@hotmail.com" },
+]
+description = "Gallery API"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+addopts = [
+    "--import-mode=importlib",
+]

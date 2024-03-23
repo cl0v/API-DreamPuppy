@@ -38,4 +38,4 @@ down:
 # 	deactivate
 
 uvi: 
-	../bin/uvicorn app.main:app --reload --port=9900
+	../bin/uvicorn gallery_api_impl.main:app --reload --port=9900

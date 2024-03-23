@@ -1,3 +1,3 @@
 #bin/bash!
 
-uvicorn app.main:app --reload --port=8080
+uvicorn gallery_api_impl.main:app --reload --port=8080

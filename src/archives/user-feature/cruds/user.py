@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
-from app.schemas import user as schema
-from app.models import user as model
+from gallery_api_impl.schemas import user as schema
+from gallery_api_impl.models import user as model
 
 from fastapi import HTTPException, status
 

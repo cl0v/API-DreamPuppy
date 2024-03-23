@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
 
 
 class UserBase(BaseModel):
@@ -10,7 +10,9 @@ class UserCreate(UserBase):
 
 
 class UserWithToken(UserBase):
-    model_config = ConfigDict(from_attributes=True)
 
     access_token: str
     token_type: str
+    
+    class ConfigDict:
+        getter_dict = True

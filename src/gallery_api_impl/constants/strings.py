@@ -1,0 +1,1 @@
+DUPLICATED_BREED_ERROR = "Raça já cadastrada"

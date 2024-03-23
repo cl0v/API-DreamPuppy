@@ -1,7 +1,6 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		
 		{
 			"type": "docker-build",
 			"label": "docker-build",
@@ -21,7 +20,7 @@
 			],
 			"python": {
 				"args": [
-					"app.main:app",
+					"gallery_api_impl.main:app",
 					"--host",
 					"0.0.0.0",
 					"--port",
