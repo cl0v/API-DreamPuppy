@@ -48,8 +48,8 @@ services:
 
   alembic:
     build:
-      context: ../../alembic
-    image: alembic
+      context: ../alembic
+    image: alembic:develop
     environment:
       POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
     networks:
