@@ -8,4 +8,4 @@ COPY alembic.ini .
 
 RUN python -m pip install --no-cache-dir --upgrade -r requirements.txt
 
-ENTRYPOINT exec tail -f /dev/null
+ENTRYPOINT alembic upgrade head
