@@ -2,15 +2,19 @@ from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.exc import IntegrityError, DatabaseError
 from gallery_api_impl.feat.puppy import schemas, models, exceptions
 from fastapi import status, UploadFile
-from gallery_api_impl.constants.strings import DUPLICATED_BREED_ERROR
+from gallery_api_impl.constants.strings import (
+    DUPLICATED_BREED_ERROR,
+    KENNEL_NOT_FOUND_ERROR,
+    PUPPY_NOT_FOUND_ERROR,
+    PUPPIES_NOT_FOUND_ERROR,
+    IMAGE_ALREADY_TAKEN_ERROR,
+    MEDIA_NOT_FOUND_ERROR,
+)
 import uuid
 from gallery_api_impl.feat.puppy.image_storage import (
     upload_image,
     get_gallery_image_url,
 )
-from gallery_api_impl.feat.kennel.models import KennelsNPuppies
-
-# from gallery_api_impl.feat.puppy.azure_storage import  get_url_by_key, create_container
 
 
 def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
@@ -74,7 +78,7 @@ def update_cover_url(db: Session, puppy_id: int, linkToId: int):
     if not coverImageUuid:
         raise exceptions.MediaException(
             status_code=status.HTTP_404_NOT_FOUND,
-            message="Arquivo de mídia não existe.",
+            message=MEDIA_NOT_FOUND_ERROR,
         )
 
     coverImageUuid = coverImageUuid.uuid
@@ -90,7 +94,7 @@ def update_cover_url(db: Session, puppy_id: int, linkToId: int):
     if duplicateCoverAlert:
         raise exceptions.PuppyException(
             status_code=status.HTTP_409_CONFLICT,
-            message="Imagem já linkada a outro filhote.",
+            message=IMAGE_ALREADY_TAKEN_ERROR,
         )
 
     puppy = db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
@@ -98,7 +102,7 @@ def update_cover_url(db: Session, puppy_id: int, linkToId: int):
     if not puppy:
         raise exceptions.PuppyException(
             status_code=status.HTTP_404_NOT_FOUND,
-            message="Filhote não existe.",
+            message=PUPPY_NOT_FOUND_ERROR,
         )
 
     puppy.cover_url = coverUrl
@@ -109,8 +113,7 @@ def update_cover_url(db: Session, puppy_id: int, linkToId: int):
 
 
 def add_puppy(
-    db: Session,
-    schema: schemas.PuppyRequestForm,
+    db: Session, schema: schemas.PuppyRequestForm, kennel_id: int
 ) -> models.PuppyModel:
     # TODO: Verificar se a raça existe na lista de raças.
 
@@ -122,6 +125,7 @@ def add_puppy(
     db_puppy = models.PuppyModel(
         **schema.model_dump(),
         uuid=puppy_uuid,
+        kennel=kennel_id,
     )
 
     # jsonVerm = json.loads(schema.vermifuges)
@@ -171,34 +175,6 @@ def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
     return model
 
 
-# def fix_puppy_images(db: Session, puppy_id: int) -> str:
-#     images = (
-#         db.query(models.Media)
-#         .filter(
-#             models.Media.puppy == puppy_id,
-#         )
-#         .all()
-#     )
-#     c = 0
-#     f = 0
-#     for i in images:
-#         if i.public_url is None:
-#             if i.uuid is not None:
-#                 img_public_url = get_image_public_url(i.uuid)
-#                 i.public_url = img_public_url
-#                 f += 1
-#                 db.commit()
-#             else:
-#                 return "Comportamento inexperado! Verifique"
-#         else:
-#             c += 1
-
-#     if c > 0:
-#         return f"Imagens ignoradas {c}; Imagens corrigidas {f}"
-
-#     return f"Número de imagens corrigidas: {f}"
-
-
 def update_puppy(
     db: Session, puppy: schemas.OutPuppyDetails, puppy_id: int
 ) -> schemas.OutPuppy:
@@ -229,7 +205,7 @@ def get_puppy(db: Session, puppy_id: int):
     if not puppy:
         raise exceptions.PuppyException(
             status_code=status.HTTP_404_NOT_FOUND,
-            message="Nenhum filhote encontrado.",
+            message=PUPPIES_NOT_FOUND_ERROR,
         )
 
     breed = (
@@ -265,11 +241,15 @@ def get_puppy(db: Session, puppy_id: int):
 
 
 def get_kennel_id_from_puppy_id(db: Session, puppy_id: str) -> int:
-    q = db.query(KennelsNPuppies).filter(KennelsNPuppies.puppy_id == puppy_id).first()
+    q = (
+        db.query(models.PuppyModel.kennel)
+        .filter(models.PuppyModel.id == puppy_id)
+        .first()
+    )
     if not q:
         raise exceptions.PuppyException(
             status_code=status.HTTP_404_NOT_FOUND,
-            message="Canil não encontrado.",
+            message=KENNEL_NOT_FOUND_ERROR,
         )
     return q.kennel_id
 
