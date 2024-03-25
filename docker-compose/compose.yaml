@@ -54,6 +54,8 @@ services:
       POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
     networks:
       - practice
+    depends_on:
+      - db
 
   db:
     image: postgres

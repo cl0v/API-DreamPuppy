@@ -20,24 +20,26 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.create_table(
-        "geo",
-        sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column("lat", sa.Numeric, nullable=False),
-        sa.Column("lon", sa.Numeric, nullable=False),
-    )
+    # Skips
+    pass
+    # op.create_table(
+    #     "geo",
+    #     sa.Column("id", sa.Integer, primary_key=True),
+    #     sa.Column("lat", sa.Numeric, nullable=False),
+    #     sa.Column("lon", sa.Numeric, nullable=False),
+    # )
 
-    op.add_column(
-        "kennels",
-        sa.Column(
-            "geo",
-            sa.Integer,
-            sa.ForeignKey("geo.id"),
-            doc="Referencia a tabela de geo",
-            nullable=True,
-            unique=True,
-        ),
-    )
+    # op.add_column(
+    #     "kennels",
+    #     sa.Column(
+    #         "geo",
+    #         sa.Integer,
+    #         sa.ForeignKey("geo.id"),
+    #         doc="Referencia a tabela de geo",
+    #         nullable=True,
+    #         unique=True,
+    #     ),
+    # )
 
 
 def downgrade() -> None:

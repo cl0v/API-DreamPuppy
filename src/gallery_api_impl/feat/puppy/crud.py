@@ -113,7 +113,9 @@ def update_cover_url(db: Session, puppy_id: int, linkToId: int):
 
 
 def add_puppy(
-    db: Session, schema: schemas.PuppyRequestForm, kennel_id: int
+    db: Session,
+    schema: schemas.PuppyRequestForm,
+    kennel_id: int,
 ) -> models.PuppyModel:
     # TODO: Verificar se a raça existe na lista de raças.
 
@@ -176,14 +178,21 @@ def _upload_media(img: UploadFile, puppy_uuid: str) -> models.Media:
 
 
 def update_puppy(
-    db: Session, puppy: schemas.OutPuppyDetails, puppy_id: int
+    db: Session,
+    puppy: schemas.InpUpdatePuppyDetails,
+    puppy_id: int,
 ) -> schemas.OutPuppy:
+    raise NotImplementedError("Implementar atualização dos dados do filhote!")
     db_puppy = (
-        db.query(models.PuppyModel).filter(models.PuppyModel.id == puppy_id).first()
+        db.query(models.PuppyModel)
+        .filter(
+            models.PuppyModel.id == puppy_id,
+        )
+        .first()
     )
 
-    puppy.model_dump(exclude_unset=True)
-    db_puppy.weight = 3000
+    # puppy.model_dump(exclude_unset=True)
+    # db_puppy.weight = 3000
     db.add(db_puppy)
     db.commit()
     db.refresh(db_puppy)

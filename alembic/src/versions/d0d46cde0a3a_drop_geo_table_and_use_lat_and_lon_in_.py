@@ -20,16 +20,18 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.drop_column("kennels", "geo")
-    op.drop_table("geo")
+    # Skips
+    # op.drop_column("kennels", "geo")
+    # op.drop_table("geo")
     op.add_column(
         "kennels",
         sa.Column(
             "lat",
             sa.Numeric,
-            nullable=True,
+            nullable=False,
             unique=False,
             index=True,
+            server_default=sa.text('0.0'),
         ),
     )
     op.add_column(
@@ -37,12 +39,15 @@ def upgrade() -> None:
         sa.Column(
             "lon",
             sa.Numeric,
-            nullable=True,
+            nullable=False,
             unique=False,
             index=True,
+            server_default=sa.text('0.0'),
         ),
     )
 
 
 def downgrade() -> None:
+    op.drop_column("kennels", "lon")
+    op.drop_column("kennels", "lat")
     pass

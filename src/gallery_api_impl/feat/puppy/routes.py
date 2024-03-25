@@ -49,9 +49,11 @@ def add_puppy(
     puppy: schemas.PuppyRequestForm,
     db: Session = Depends(get_db),
 ):
-    n_puppy = crud.add_puppy(db, schema=puppy)
-
-    kennel_crud.relate_to_kennel_n_puppies(db, kennel_id=kennel_id, puppy_id=n_puppy.id)
+    n_puppy = crud.add_puppy(
+        db,
+        schema=puppy,
+        kennel_id=kennel_id,
+    )
 
     return {"id": n_puppy.id, "message": "OK"}
 
@@ -62,9 +64,10 @@ def add_puppy(
     response_model=schemas.OutPuppy,
     dependencies=[Depends(ignore_non_admins)],
 )
+# TODO: Terminar de adicionar endpoint de atualização dos dados do filhote.
 def update_puppy(
     puppy_id: int,
-    puppy: schemas.OutPuppyDetails,
+    puppy: schemas.InpUpdatePuppyDetails,
     db: Session = Depends(get_db),
 ):
     puppy = crud.update_puppy(db, puppy, puppy_id)

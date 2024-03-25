@@ -38,9 +38,9 @@ class Vaccines(BaseModel):
 
 
 class OutPuppy(BaseModel):
-    # Trazer o images pra ca e todo filhote retornado irá ter uma lista de fotos. [task 213123312321]
     # images: list[str]
     id: int
+    kennel: int
     breed: int
     pedigree: bool
     price: int
@@ -60,16 +60,16 @@ class OutPuppyDetails(OutPuppy):
     images: list[str] | None
 
 
-class InInUpdatePuppyDetails(BaseModel):
-    breed: int | None = None
-    pedigree: bool | None = None
+class InpUpdatePuppyDetails(BaseModel):
+    # breed: int | None = None
+    # pedigree: bool | None = None
+    # microchip: bool | None = None
+    gender: int | None = None
     price: int | None = None
-    microchip: bool | None = None
     weight: int | None = None
 
     class ConfigDict:
         getter_dict = True
-
 
     #     data =
     # (exclude_unset=True)

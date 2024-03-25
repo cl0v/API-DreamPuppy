@@ -2,8 +2,6 @@ from pydantic import BaseModel
 
 
 class GeoLoc(BaseModel):
-    lat: float
-    lon: float
 
     class ConfigDict:
         getter_dict = True
@@ -15,17 +13,18 @@ class CreateKennel(BaseModel):
     instagram: str
     city: str
     uf: str
-    address: str
-    cep: str
-    geo: GeoLoc
+    address: str | None = None
+    cep: str | None = None
+    lat: float | None = None
+    lon: float | None = None
 
     class ConfigDict:
         getter_dict = True
 
 
-class OutputKennel(BaseModel):
+class OutputKennel(CreateKennel):
     id: int
-    geo: int
+    msg: str = "OK"
 
 
 class OutputAddPuppy(BaseModel):

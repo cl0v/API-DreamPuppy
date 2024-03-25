@@ -16,33 +16,52 @@ class KennelModel(Base):
     __tablename__ = "kennels"
 
     id = Column(
-        Integer, Sequence("kennels_id_seq"), primary_key=True, autoincrement=True
+        Integer,
+        Sequence("kennels_id_seq"),
+        primary_key=True,
+        autoincrement=True,
     )
-    name = Column(String, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=func.now())
-    phone = Column(String, nullable=False)
-    instagram = Column(String, nullable=True)
-    address = Column(String, nullable=False)
-    city = Column(String, nullable=False)
-    uf = Column(String, nullable=False)
-    cep = Column(String, nullable=False)
-
-    geo = Column(Integer, ForeignKey("geo.id"), nullable=True, index=True)
-    # geo = relationship('GeoLoc', back_populates=)
-
-
-class KennelsNPuppies(Base):
-    __tablename__ = "kennels_n_puppies"
-
-    kennel_id = Column(Integer, ForeignKey("kennels.id"), nullable=False)
-    puppy_id = Column(
-        Integer, ForeignKey("puppies.id"), nullable=False, unique=True, primary_key=True
+    name = Column(
+        String,
+        nullable=False,
+    )
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=func.now(),
+    )
+    phone = Column(
+        String,
+        nullable=False,
+    )
+    instagram = Column(
+        String,
+        nullable=True,
+    )
+    address = Column(
+        String,
+        nullable=False,
+    )
+    city = Column(
+        String,
+        nullable=False,
+    )
+    uf = Column(
+        String,
+        nullable=False,
+    )
+    cep = Column(
+        String,
+        nullable=False,
     )
 
-
-class GeoLoc(Base):
-    __tablename__ = "geo"
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    lat = Column(Numeric, nullable=False)
-    lon = Column(Numeric, nullable=False)
-    # kennel = relationship("KennelModel", back_populates='geo')
+    lat = Column(
+        Numeric,
+        nullable=False,
+        index=True,
+    )
+    lon = Column(
+        Numeric,
+        nullable=False,
+        index=True,
+    )

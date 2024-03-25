@@ -1,5 +1,7 @@
 from .. import utils
 
+ace_kennel_id = 2
+
 add_breed_data = {"name": "breed_{0}".format(utils.random_string_gen())}
 
 some_available_breeds = [

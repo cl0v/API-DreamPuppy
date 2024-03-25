@@ -9,6 +9,7 @@ class PuppyModel(Base):
 
     # Form
     id = Column(Integer, primary_key=True, nullable=False)
+    kennel = Column(Integer, ForeignKey("kennels.id"), nullable=False, unique=False)
     breed = Column(Integer, ForeignKey("breeds.id"), nullable=False, index=True)
     images = relationship("Media", back_populates="pet", cascade="all, delete-orphan")
     price = Column(Integer, nullable=False, index=True)
@@ -32,6 +33,7 @@ class PuppyModel(Base):
     # Operacao
     public_access = Column(Boolean, default=False, nullable=False)
     reviewed = Column(Boolean, default=False, nullable=False)
+
 
     # Invisivel; Auxiliar
     minimum_age_departure_in_days = Column(Integer, default=60, nullable=False)
