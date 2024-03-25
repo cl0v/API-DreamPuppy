@@ -78,6 +78,7 @@ def test_get_kennel():
 class TestDefaultKennelAPI(unittest.TestCase):
 
     def test_list_puppies_from_kennel(self):
-        r = client.get("/kennels/4/puppies/", headers=admin_auth_header)
+        r = client.get("/kennels/80/puppies/", headers=admin_auth_header)
         self.assertEqual(r.status_code, 200)
         self.assertIsInstance(r.json(), list)
+        self.assertEqual(r.json()[0]["id"], 126)

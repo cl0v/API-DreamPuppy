@@ -29,7 +29,6 @@ async def add_kennel(kennel: schemas.CreateKennel, db: Session = Depends(get_db)
     return kennel
 
 
-# TODO: Fix relate puppies
 @router.get(
     "/kennels/{kennel_id}/puppies",
     response_model=list[OutPuppy],
@@ -39,7 +38,4 @@ def list_puppies_from_kennel(
     kennel_id: int,
     db: Session = Depends(get_db),
 ):
-    ids = crud.list_my_puppies_ids(db, kennel_id)
-    #TODO: Remover
-    tmp = puppy_crud.list_puppies(db, ids)
-    return ids
+    return crud.list_my_puppies(db, kennel_id)

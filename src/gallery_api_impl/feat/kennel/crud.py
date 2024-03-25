@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from . import schemas, models, exceptions
 from gallery_api_impl.feat.puppy.models import PuppyModel
+from gallery_api_impl.feat.puppy.schemas import OutPuppy
 from sqlalchemy.exc import IntegrityError
 from fastapi import status
 from psycopg2.errors import UniqueViolation
@@ -75,18 +76,11 @@ def get_kennel(db: Session, kennel_id: int) -> models.KennelModel:
     return model
 
 
-def list_my_puppies_ids(db: Session, kennel_id: int) -> list[int]:
-    # TODO: Fix since puppy have the id ref to kennel
-    # TODO: KennelsNPuppies do not exist anymore ref to puppies.kennel
+def list_my_puppies(db: Session, kennel_id: int) -> list[OutPuppy]:
     q = (
-        db.query(PuppyModel.id)
+        db.query(PuppyModel)
         .filter(PuppyModel.kennel == kennel_id)
         .all()
     )
 
-    tmp = []
-
-    for r in q:
-        tmp.append(r.id)
-
-    return tmp
+    return q

@@ -33,6 +33,8 @@ def fill_gallery(
         db.query(
             PuppyModel.id,
             PuppyModel.cover_url,
+            KennelModel.lat,
+            KennelModel.lon,
         )
         .join(
             KennelModel,
@@ -66,7 +68,13 @@ def fill_gallery(
     val = paginate(
         db,
         q,
-        transformer=lambda q: [{"id": id, "url": cover_url} for id, cover_url in q],
+        transformer=lambda q: [
+            {
+                "id": id,
+                "url": cover_url,
+            }
+            for id, cover_url in q
+        ],
     )
 
     return val

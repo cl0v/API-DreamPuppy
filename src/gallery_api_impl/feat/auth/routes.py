@@ -27,7 +27,7 @@ from gallery_api_impl.cruds.user import validate_user_exists
 
 from gallery_api_impl.main import app
 
-@gallery_api_impl.post("/auth/register", response_model=Token)
+@app.post("/auth/register", response_model=Token)
 async def register_for_credentials(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[Session, Depends(get_db)],
@@ -36,7 +36,7 @@ async def register_for_credentials(
     return credentials
 
 
-@gallery_api_impl.post(
+@app.post(
     "/users/new",
     dependencies=[Depends(validate_jwt), Depends(validate_user_exists)],
     response_model=user_schema.UserWithToken,

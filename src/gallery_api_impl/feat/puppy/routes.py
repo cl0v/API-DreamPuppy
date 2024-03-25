@@ -31,6 +31,7 @@ def upload_puppy_images(
 )
 def update_cover(
     puppy_id: int,
+    # Image id on medias table
     linkTo: int,
     db: Session = Depends(get_db),
 ):
