@@ -56,7 +56,11 @@ def add_puppy(
         kennel_id=kennel_id,
     )
 
-    return {"id": n_puppy.id, "message": "OK"}
+    return {
+        "id": n_puppy.id,
+        "kennel": n_puppy.kennel,
+        "status": "OK",
+    }
 
 
 # App Gallery:
