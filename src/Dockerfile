@@ -10,7 +10,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN python -m pip install --no-cache-dir --upgrade -r requirements.txt
 
-COPY app app
+COPY gallery_api_impl gallery_api_impl
 
 # RUN uvicorn gallery_api_impl.main:app --host 0.0.0.0 --port 8080
 CMD ["uvicorn", "gallery_api_impl.main:app", "--host", "0.0.0.0", "--port", "8080"]
