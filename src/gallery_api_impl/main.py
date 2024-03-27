@@ -38,12 +38,12 @@ def root():
 
 @app.get("/policy.pdf", response_class=FileResponse)
 def policy_pdf():
-    return "app/assets/policy.pdf"
+    return "gallery_api_impl/assets/policy.pdf"
 
 
 @app.get("/policy.docx", response_class=FileResponse)
 def policy_docx():
-    return "app/assets/policy.docx"
+    return "gallery_api_impl/assets/policy.docx"
 
 
 @app.get("/redir")
