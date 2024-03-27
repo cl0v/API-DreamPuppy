@@ -260,7 +260,7 @@ def get_kennel_id_from_puppy_id(db: Session, puppy_id: str) -> int:
             status_code=status.HTTP_404_NOT_FOUND,
             message=KENNEL_NOT_FOUND_ERROR,
         )
-    return q.kennel_id
+    return q.kennel
 
 
 def list_puppies(
