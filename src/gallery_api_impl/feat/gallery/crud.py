@@ -33,8 +33,6 @@ def fill_gallery(
         db.query(
             PuppyModel.id,
             PuppyModel.cover_url,
-            KennelModel.lat,
-            KennelModel.lon,
         )
         .join(
             KennelModel,
