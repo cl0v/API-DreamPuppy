@@ -9,19 +9,33 @@ networks:
 
 
 services:
-  gallery-api:
-    image: gallery-compose
+  # frontend-service:
+  #   image: vianagallery/frontend:stable
+  #   ports:
+  #     - 8000:8000
+    # logging:
+    #     driver: journald
+    #     options:
+    #         tag: latest
+
+  gallery-service:
+    image: vianagallery/gallery-api:debug
+    volumes:
+      - type: bind
+        source: ../src/gallery_api_impl
+        target: /app/gallery_api_impl
+    command: "uvicorn gallery_api_impl.main:app --host 0.0.0.0 --port 8081 --reload"
     build:
       context: ../src
     # Enable to debug
     # command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn gallery_api_impl.main:app --host 0.0.0.0 --port 8080"]
     ports:
       - 8080:8080
+      - 8081:8081
       # Enable to debug
       # - 5678:5678
     environment:
       TEST_NAME: Compose Debug Mode
-      API_VERSION: 1.0.0
       POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
       # AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net

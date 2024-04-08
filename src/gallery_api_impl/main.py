@@ -33,7 +33,7 @@ app.include_router(kennel_router)
 
 @app.get("/")
 def root():
-    return f"Hello {TEST_NAME} : {API_VERSION}"
+    return f"nao tem?! {TEST_NAME} : {API_VERSION}"
 
 
 @app.get("/policy.pdf", response_class=FileResponse)

@@ -14,9 +14,8 @@ run:
 compose:
 	docker compose up
 
-develop:
-	docker build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:D${tag} .
-	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:develop .
+debug:
+	docker build --platform linux/arm64,linux/amd64 --builder=container -t vianagallery/gallery-api:debug .
 
 profile:
 	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:p${tag} .
