@@ -32,6 +32,7 @@ def fill_gallery(
     q = (
         db.query(
             PuppyModel.id,
+            PuppyModel.uuid,
             PuppyModel.cover_url,
         )
         .join(
@@ -69,9 +70,10 @@ def fill_gallery(
         transformer=lambda q: [
             {
                 "id": id,
+                "uuid": uuid,
                 "url": cover_url,
             }
-            for id, cover_url in q
+            for id, uuid, cover_url in q
         ],
     )
 

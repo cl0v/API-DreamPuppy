@@ -2,3 +2,14 @@
 # !/file.txt
 !/app
 !/requirements.txt
+
+Makefile
+README.md
+main.py
+.env
+dev-requirements.txt
+archives/
+.vscode
+*/__pycache__/*
+.pytest_cache/
+sh/

@@ -12,7 +12,7 @@ from gallery_api_impl.feat.puppy.exceptions import (
     MediaException,
 )
 from gallery_api_impl.feat.kennel.exceptions import KennelException
-from gallery_api_impl.env import TEST_NAME, API_VERSION
+from gallery_api_impl.env import API_VERSION
 from fastapi_pagination import add_pagination
 
 Base.metadata.create_all(bind=engine)
@@ -33,7 +33,7 @@ app.include_router(kennel_router)
 
 @app.get("/")
 def root():
-    return f"nao tem?! {TEST_NAME} : {API_VERSION}"
+    return f"Versão:{API_VERSION}"
 
 
 @app.get("/policy.pdf", response_class=FileResponse)

@@ -4,6 +4,8 @@ from gallery_api_impl.database import get_db
 from . import schemas, crud
 import gallery_api_impl.feat.kennel.crud as kennel_crud
 from gallery_api_impl.security import ignore_non_admins
+from typing import Union
+
 
 router = APIRouter()
 
@@ -85,7 +87,7 @@ def update_puppy(
     response_model=schemas.OutPuppyDetails,
 )
 def get_puppy(
-    puppy_id: int,
+    puppy_id: Union[int,str],
     db: Session = Depends(get_db),
 ):
     puppy = crud.get_puppy(db, puppy_id)

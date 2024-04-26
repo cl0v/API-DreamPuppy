@@ -16,6 +16,8 @@ from gallery_api_impl.feat.puppy.image_storage import (
     get_gallery_image_url,
 )
 
+from typing import Union
+
 
 def add_breed(db: Session, breed: schemas.NewBreed) -> models.BreedModel:
     # Verifica se a raça já está cadastrada
@@ -199,17 +201,30 @@ def update_puppy(
     return db_puppy
 
 
-def get_puppy(db: Session, puppy_id: int):
-    puppy = (
-        db.query(models.PuppyModel)
-        .options(
-            # joinedload(models.PuppyModel.vaccines),
-            # joinedload(models.PuppyModel.vermifuges),
-            joinedload(models.PuppyModel.images),
+def get_puppy(db: Session, puppy_id: Union[int,str]):
+    puppy = None
+    if type(puppy_id) is int:
+        puppy = (
+            db.query(models.PuppyModel)
+            .options(
+                # joinedload(models.PuppyModel.vaccines),
+                # joinedload(models.PuppyModel.vermifuges),
+                joinedload(models.PuppyModel.images),
+            )
+            .filter(models.PuppyModel.id == puppy_id)
+            .first()
         )
-        .filter(models.PuppyModel.id == puppy_id)
-        .first()
-    )
+    elif type(puppy_id) is str:
+         puppy = (
+            db.query(models.PuppyModel)
+            .options(
+                # joinedload(models.PuppyModel.vaccines),
+                # joinedload(models.PuppyModel.vermifuges),
+                joinedload(models.PuppyModel.images),
+            )
+            .filter(models.PuppyModel.uuid == puppy_id)
+            .first()
+        )
 
     if not puppy:
         raise exceptions.PuppyException(
