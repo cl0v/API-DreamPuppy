@@ -1,4 +1,4 @@
-tag = 1.2.0
+tag = 1.3.0
 
 build:
 	docker build --platform linux/arm64 -t vianagallery/gallery-api:develop .
@@ -15,15 +15,15 @@ compose:
 	docker compose up
 
 debug:
-	docker build --platform linux/arm64,linux/amd64 --builder=container -t vianagallery/gallery-api:debug .
+	docker build -t vianagallery/gallery-api:debug .
 
 profile:
-	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:p${tag} .
-	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:profile .
+	docker build vianagallery/gallery-api:debug .
+	docker buildx build --platform linux/amd64 --push -t vianagallery/gallery-api:profile .
 
 stable:
-	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:${tag} .
-	docker buildx build --platform linux/arm64,linux/amd64 --builder=container --push -t vianagallery/gallery-api:stable .
+	docker buildx build --platform linux/amd64 --push -t vianagallery/gallery-api:${tag} .
+	docker buildx build --platform linux/amd64 --push -t vianagallery/gallery-api .
 
 up:
 	docker compose up -d --always-recreate-deps

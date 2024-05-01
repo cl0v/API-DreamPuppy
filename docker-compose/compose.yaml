@@ -1,12 +1,8 @@
-version: '3.4'
-
 volumes:
-  compose-volume:
-
+  serious-volume-debug-environment:
 
 networks:
   practice:
-
 
 services:
   # frontend-service:
@@ -24,21 +20,20 @@ services:
       - type: bind
         source: ../src/gallery_api_impl
         target: /app/gallery_api_impl
-    command: "uvicorn gallery_api_impl.main:app --host 0.0.0.0 --port 8081 --reload"
+    # command: "uvicorn gallery_api_impl.main:app --host 0.0.0.0 --port 8081 --reload"
     build:
       context: ../src
     # Enable to debug
-    # command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn gallery_api_impl.main:app --host 0.0.0.0 --port 8080"]
+      # command: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --wait-for-client --listen 0.0.0.0:5678 -m uvicorn gallery_api_impl.main:app --host 0.0.0.0 --port 8080"]
     ports:
       - 8080:8080
       - 8081:8081
       # Enable to debug
-      # - 5678:5678
+      - 5678:5678
     environment:
       TEST_NAME: Compose Debug Mode
       POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
       ADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtYXJjZWxvQGVtYWlsLmNvbSIsImV4cCI6MTcwMzQ1MTc2NH0.7H0tsroOtGhRmoixujPCqOb5w7fIB8YjTRkEnN88XCI
-      # AZURE_STORAGE_CNN_STR: DefaultEndpointsProtocol=https;AccountName=01vianadev;AccountKey=Rv3sdophD7yqxfpuVdDdeyEANR0XJ9EpRRfjTn+pcjz4mPqbiYQRzeNdOJIPhyc8U5CWPXktvVNL+AStoT9SlA==;EndpointSuffix=core.windows.net
       CFI_ID: 396a1fd05689c45f07bdd191705e98dd
       CFI_TOKEN: aca-0JGeQfgqcseF1zDc5YSVf63Mp0Xs2cOtLv-J
     networks:
@@ -55,27 +50,31 @@ services:
     #       path: package.json
 
 
+  # google-merchant:
+  #   image: google-merchant
+  #   build:
+  #     context: ../micro-services/google-merchant
+  #   ports:
+  #     - 7011:80
+  #   environment:
+  #     API_TOKEN: NONEYETKSKSKSK
 
-    ###         ####        ###
-    # Containers adicionais para funcionamento do sistema.
-    ###         ####        ###
-
-  alembic:
-    build:
-      context: ../alembic
-    image: alembic:develop
-    environment:
-      POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
-    networks:
-      - practice
-    depends_on:
-      - db
+  # alembic:
+  #   build:
+  #     context: ../alembic
+  #   image: alembic:develop
+  #   environment:
+  #     POSTGRES_URL: postgresql+psycopg2://usr:pwd@db:5432/db
+  #   networks:
+  #     - practice
+  #   depends_on:
+  #     - db
 
   db:
     image: postgres
     restart: always
     volumes:
-      - compose-volume:/var/lib/postgresql/data/
+      - serious-volume-debug-environment:/var/lib/postgresql/data/
     ports:
       - 5432
     environment:

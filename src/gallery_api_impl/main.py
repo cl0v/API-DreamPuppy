@@ -36,16 +36,6 @@ def root():
     return f"Versão:{API_VERSION}"
 
 
-@app.get("/policy.pdf", response_class=FileResponse)
-def policy_pdf():
-    return "gallery_api_impl/assets/policy.pdf"
-
-
-@app.get("/policy.docx", response_class=FileResponse)
-def policy_docx():
-    return "gallery_api_impl/assets/policy.docx"
-
-
 @app.get("/redir")
 def redirToDownloads(isAndroid: bool = False):
     url_loja = "https://apps.apple.com/br/app/dreampuppy-galeria-de-filhotes/id6478811369?l=en-GB"
