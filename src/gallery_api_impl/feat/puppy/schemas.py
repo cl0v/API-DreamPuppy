@@ -40,6 +40,7 @@ class Vaccines(BaseModel):
 class OutPuppy(BaseModel):
     # images: list[str]
     id: int
+    uuid: str
     kennel: int
     breed: int
     pedigree: bool

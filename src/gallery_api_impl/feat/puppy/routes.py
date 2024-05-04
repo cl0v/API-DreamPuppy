@@ -77,6 +77,7 @@ def update_puppy(
     puppy: schemas.InpUpdatePuppyDetails,
     db: Session = Depends(get_db),
 ):
+    return 0
     puppy = crud.update_puppy(db, puppy, puppy_id)
     return puppy
 
@@ -87,7 +88,7 @@ def update_puppy(
     response_model=schemas.OutPuppyDetails,
 )
 def get_puppy(
-    puppy_id: Union[int,str],
+    puppy_id: str,
     db: Session = Depends(get_db),
 ):
     puppy = crud.get_puppy(db, puppy_id)

@@ -5,6 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python Debugger: FastAPI",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "src.gallery_api_impl.main:app",
+                "--reload",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "9900"
+            ],
+            "jinja": true
+        },
+        {
             "name": "Python Debugger: Module",
             "type": "debugpy",
             "request": "launch",

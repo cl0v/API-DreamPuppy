@@ -203,7 +203,8 @@ def update_puppy(
 
 def get_puppy(db: Session, puppy_id: Union[int,str]):
     puppy = None
-    if type(puppy_id) is int:
+    
+    if puppy_id.isnumeric():
         puppy = (
             db.query(models.PuppyModel)
             .options(
@@ -214,8 +215,8 @@ def get_puppy(db: Session, puppy_id: Union[int,str]):
             .filter(models.PuppyModel.id == puppy_id)
             .first()
         )
-    elif type(puppy_id) is str:
-         puppy = (
+    else:
+        puppy = (
             db.query(models.PuppyModel)
             .options(
                 # joinedload(models.PuppyModel.vaccines),

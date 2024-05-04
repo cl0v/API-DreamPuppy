@@ -1,4 +1,4 @@
-tag = 1.3.0
+tag = 1.3.1
 
 build:
 	docker build --platform linux/arm64 -t vianagallery/gallery-api:develop .
@@ -38,3 +38,6 @@ down:
 
 uvi: 
 	uvicorn gallery_api_impl.main:app --reload --port=9900
+
+rollout:
+	kubectl rollout restart deployments/api -n backend

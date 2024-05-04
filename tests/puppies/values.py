@@ -13,7 +13,7 @@ some_available_breeds = [
 add_puppy_json = {
     "breed": 1,
     "price": 970,
-    "gender": -1,
+    "gender": 0,
     "pedigree": True,
     "birth": "2023-11-02T18:25:43",
     "microchip": True,

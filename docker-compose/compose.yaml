@@ -50,14 +50,14 @@ services:
     #       path: package.json
 
 
-  # google-merchant:
-  #   image: google-merchant
-  #   build:
-  #     context: ../micro-services/google-merchant
-  #   ports:
-  #     - 7011:80
-  #   environment:
-  #     API_TOKEN: NONEYETKSKSKSK
+  google-merchant:
+    image: google-merchant
+    build:
+      context: ../micro-services/google-merchant
+    ports:
+      - 9999:80
+    environment:
+      MERCHANT_ID: 5346348231
 
   # alembic:
   #   build:
