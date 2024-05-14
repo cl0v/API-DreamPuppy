@@ -51,14 +51,15 @@ services:
 
 
   google-merchant:
-    image: google-merchant
+    image: microservices/google-shopping:dev
     build:
-      context: ../micro-services/google-merchant
+      context: ../microservices/google-merchant
     ports:
-      - 9999:80
+      - 9901:80
     environment:
       MERCHANT_ID: 5346348231
-
+    networks:
+      - practice
   # alembic:
   #   build:
   #     context: ../alembic

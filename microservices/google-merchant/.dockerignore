@@ -1,0 +1,6 @@
+Dockerfile.debug
+Makefile
+main.debug.py
+.gitignore
+.env
+__pycache__
